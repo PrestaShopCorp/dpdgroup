@@ -1,5 +1,5 @@
 {**
-* 2014 Apple Inc.
+* 2015 XXXXX.
 *
 * NOTICE OF LICENSE
 *
@@ -12,9 +12,9 @@
 * to telco.csee@geopost.pl so we can send you a copy immediately.
 *
 *  @author    JSC INVERTUS www.invertus.lt <help@invertus.lt>
-*  @copyright 2014 DPD Polska sp. z o.o. 
+*  @copyright 2015 DPD Polska sp. z o.o.
 *  @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of DPD Polska sp. z o.o. 
+*  International Registered Trademark & Property of DPD Polska sp. z o.o.
 *}
 <div class="csv_info_container">
 	<span>
@@ -69,7 +69,16 @@
 			{l s='d. 27 - DPD Same Day' mod='dpdgeopost'}
 		</span>
 		<span>
-			{l s='e. "*" - rule can be applied to any carrier' mod='dpdgeopost'}
+			{l s='e. 109 - DPD B2C' mod='dpdgeopost'}
+		</span>
+		<span>
+			{l s='f. 40033 - DPD International' mod='dpdgeopost'}
+		</span>
+		<span>
+			{l s='g. 40107 - DPD Bulgaria' mod='dpdgeopost'}
+		</span>
+		<span>
+			{l s='h. "*" - rule can be applied to any carrier' mod='dpdgeopost'}
 		</span>
 	</span>
 	<span>

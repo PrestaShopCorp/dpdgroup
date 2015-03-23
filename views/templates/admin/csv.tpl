@@ -1,5 +1,5 @@
 {**
-* 2014 Apple Inc.
+* 2015 XXXXX.
 *
 * NOTICE OF LICENSE
 *
@@ -12,9 +12,9 @@
 * to telco.csee@geopost.pl so we can send you a copy immediately.
 *
 *  @author    JSC INVERTUS www.invertus.lt <help@invertus.lt>
-*  @copyright 2014 DPD Polska sp. z o.o. 
+*  @copyright 2015 DPD Polska sp. z o.o.
 *  @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of DPD Polska sp. z o.o. 
+*  International Registered Trademark & Property of DPD Polska sp. z o.o.
 *}
 <form id="configuration_csv_form" class="defaultForm" action="{$saveAction|escape:'htmlall':'UTF-8'}" method="post" enctype="multipart/form-data">
 	<fieldset id="sender_payer">
@@ -22,7 +22,7 @@
 			<img src="{$smarty.const._DPDGEOPOST_IMG_URI_|escape:'htmlall':'UTF-8'}settings.png" alt="{l s='Settings |' mod='dpdgeopost'}" />
 			{l s='Price rules import' mod='dpdgeopost'}
 		</legend>
-		
+
 		<label>
 			{l s='Upload CSV:' mod='dpdgeopost'}
 		</label>
@@ -31,20 +31,20 @@
 			<input type="submit" class="button" name="{DpdGeopostCSVController::SETTINGS_SAVE_CSV_ACTION|escape:'htmlall':'UTF-8'}" value="{l s='Upload' mod='dpdgeopost'}" />
 		</div>
 		<div class="clear"></div>
-		
+
 		<label>
 			{l s='Download CSV:' mod='dpdgeopost'}
 		</label>
 		<div class="margin-form">
 			<input type="submit" class="button" name="{DpdGeopostCSVController::SETTINGS_DOWNLOAD_CSV_ACTION|escape:'htmlall':'UTF-8'}" value="{l s='Download' mod='dpdgeopost'}" />
 		</div>
-		
+
 		<div class="separation"></div>
-		
+
 		<h3>
 			{l s='Preview imported prices:' mod='dpdgeopost'}
 		</h3>
-		
+
 		<div class="csv_information_block">
 			<p class="preference_description">
 				{l s='Available shiping methods and their IDs:' mod='dpdgeopost'}
@@ -59,20 +59,29 @@
 				{l s='* DPD 12:00: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_12_ID_|escape:'htmlall':'UTF-8'}
 			</p>
 			<p class="preference_description">
-				{l s='* DPD Same Day: ID -' mod='dpdgeopost' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_SAME_DAY_ID_|escape:'htmlall':'UTF-8'}
+				{l s='* DPD Same Day: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_SAME_DAY_ID_|escape:'htmlall':'UTF-8'}
+			</p>
+			<p class="preference_description">
+				{l s='* DPD B2C: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_B2C_ID_|escape:'htmlall':'UTF-8'}
+			</p>
+			<p class="preference_description">
+				{l s='* DPD International: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_INTERNATIONAL_ID_|escape:'htmlall':'UTF-8'}
+			</p>
+			<p class="preference_description">
+				{l s='* DPD Bulgaria: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_BULGARIA_ID_|escape:'htmlall':'UTF-8'}
 			</p>
 			<br />
 
 			<p class="preference_description">
-				{l s='Decimal separator symbol is: "."' mod='dpdgeopost' mod='dpdgeopost'}
+				{l s='Decimal separator symbol is: "."' mod='dpdgeopost'}
 			</p>
 
 			<p class="preference_description">
-				{l s='Maximum decimal numbers: 6' mod='dpdgeopost' mod='dpdgeopost'}
+				{l s='Maximum decimal numbers: 6' mod='dpdgeopost'}
 			</p>
-			
+
 			<p class="preference_description">
-				{l s='Please also check module settings page in order to be sure that correct price calculation method is selected.' mod='dpdgeopost' mod='dpdgeopost'}
+				{l s='Please also check module settings page in order to be sure that correct price calculation method is selected.' mod='dpdgeopost'}
 			</p>
 
 			<div class="toggle_csv_info_link_container">
@@ -81,7 +90,7 @@
 			<div id="toggle_csv_info">
 				{include file=$smarty.const._PS_MODULE_DIR_|cat:'dpdgeopost/views/templates/admin/csv_info.tpl'}
 			</div>
-			
+
 			<p class="clear list info">
 				{l s='The first matching rule will be used for price calculation. Make sure your CSV rules arre in correct order!' mod='dpdgeopost'}
 			</p>
@@ -111,7 +120,7 @@
 								| {l s='Display' mod='dpdgeopost'}
 								<select name="pagination" onchange="submit()">
 									{foreach $pagination AS $value}
-										<option value="{$value|intval|escape:'htmlall':'UTF-8'}"{if $selected_pagination == $value} selected="selected" {elseif $selected_pagination == NULL && $value == $pagination[1]} selected="selected2"{/if}>{$value|intval|escape:'htmlall':'UTF-8'}</option>
+										<option value="{$value|intval}"{if $selected_pagination == $value} selected="selected" {elseif $selected_pagination == NULL && $value == $pagination[1]} selected="selected2"{/if}>{$value|intval}</option>
 									{/foreach}
 								</select>
 								/ {$list_total|escape:'htmlall':'UTF-8'} {l s='result(s)' mod='dpdgeopost'}
@@ -176,7 +185,7 @@
 										</th>
 									</tr>
 								</thead>
-			
+
 								<tbody>
 									{if isset($csv_data) && !empty($csv_data)}
 										{section name=ii loop=$csv_data}
@@ -232,7 +241,7 @@
 					</tr>
 					<tr>
 						<td>
-							<input type="submit" {if !isset($csv_data) || isset($csv_data) && empty($csv_data)}disabled="disabled"{/if} class="button" name="{DpdGeopostCSVController::SETTINGS_DELETE_CSV_ACTION}" value="{l s='Delete all prices' mod='dpdgeopost'}" />
+							<input type="submit" {if !isset($csv_data) || isset($csv_data) && empty($csv_data)}disabled="disabled"{/if} class="button" name="{DpdGeopostCSVController::SETTINGS_DELETE_CSV_ACTION|escape:'htmlall':'UTF-8'}" value="{l s='Delete all prices' mod='dpdgeopost'}" />
 						</td>
 					</tr>
 				</tbody>
