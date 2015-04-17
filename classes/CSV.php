@@ -18,7 +18,7 @@
  *  International Registered Trademark & Property of DPD Polska sp. z o.o.
  */
 
-class DpdGeopostCSV extends DpdGeopostObjectModel
+class DpdGroupCSV extends DpdGroupObjectModel
 {
 	public $id_shop;
 	public $date_add;
@@ -51,10 +51,10 @@ class DpdGeopostCSV extends DpdGeopostObjectModel
 	const COLUMN_COD_SURCHARGE_PERCENTAGE	= 10;
 	const COLUMN_COD_MIN_SURCHARGE			= 11;
 
-	const CSV_FILE 							= 'DPD_GEOPOST_CSV_FILE';
+	const CSV_FILE 							= 'DPD_GROUP_CSV_FILE';
 
 	public static $definition = array(
-		'table' => _DPDGEOPOST_CSV_DB_,
+		'table' => _DPDGROUP_CSV_DB_,
 		'primary' => 'id_csv',
 		'multilang' => false,
 		'multishop' => false,
@@ -83,7 +83,7 @@ class DpdGeopostCSV extends DpdGeopostObjectModel
 		return DB::getInstance()->executeS('
 			SELECT `id_csv`, `country`, `region`, `zip`, `weight_from`, `weight_to`, `shipping_price`, `shipping_price_percentage`, `currency`,
 				`method_id`, `cod_surcharge`, `cod_surcharge_percentage`, `cod_min_surcharge`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_CSV_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_CSV_DB_.'`
 			WHERE `id_shop` = "'.(int)Context::getContext()->shop->id.'"
 			'.$limit
 		);
@@ -92,7 +92,7 @@ class DpdGeopostCSV extends DpdGeopostObjectModel
 	public static function deleteAllData()
 	{
 		return DB::getInstance()->Execute('
-			DELETE FROM `'._DB_PREFIX_._DPDGEOPOST_CSV_DB_.'`
+			DELETE FROM `'._DB_PREFIX_._DPDGROUP_CSV_DB_.'`
 			WHERE `id_shop` = "'.(int)Context::getContext()->shop->id.'"
 		');
 	}
@@ -102,7 +102,7 @@ class DpdGeopostCSV extends DpdGeopostObjectModel
 		return DB::getInstance()->executeS('
 			SELECT `country`, `region`, `zip`, `weight_from`, `weight_to`, `shipping_price`, `shipping_price_percentage`, `currency`,
 				`shipping_price_percentage`, `method_id`, `cod_surcharge`, `cod_surcharge_percentage`, `cod_min_surcharge`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_CSV_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_CSV_DB_.'`
 			WHERE `id_shop` = "'.(int)Context::getContext()->shop->id.'"
 		');
 	}

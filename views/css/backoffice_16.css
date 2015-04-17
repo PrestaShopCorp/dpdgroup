@@ -1,14 +1,14 @@
-#dpdgeopost_pickup_dialog
+#dpdgroup_pickup_dialog
 {
 	display:none;
 }
 
-#dpdgeopost_pickup_dialog .panel
+#dpdgroup_pickup_dialog .panel
 {
 	padding: 20px;
 }
 
-#dpdgeopost_pickup_dialog .panel .panel-heading
+#dpdgroup_pickup_dialog .panel .panel-heading
 {
 	margin: -20px -16px 15px;
 	padding: 0 0 0 5px;
@@ -19,12 +19,12 @@
 	font-weight: 400;
 }
 
-#dpdgeopost_pickup_dialog .panel .panel-footer
+#dpdgroup_pickup_dialog .panel .panel-footer
 {
 	height: auto;
 }
 
-#dpdgeopost_pickup_dialog .table-container
+#dpdgroup_pickup_dialog .table-container
 {
 	border: 1px solid #ddd;
 	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1), 0 0 0 3px #fff inset;

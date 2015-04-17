@@ -62,7 +62,7 @@ table#shipment_list tr.nodrag.nodrop a:hover
 	text-decoration: none;
 }
 
-#dpdgeopost_pickup_dialog
+#dpdgroup_pickup_dialog
 {
 	display:none;
 	background: #EBEDF4;
@@ -70,40 +70,40 @@ table#shipment_list tr.nodrag.nodrop a:hover
 	padding: 20px;
 }
 
-#dpdgeopost_pickup_dialog h2
+#dpdgroup_pickup_dialog h2
 {
 	margin-bottom: 25px;
 }
 
-#dpdgeopost_pickup_dialog label:not(.ps16)
+#dpdgroup_pickup_dialog label:not(.ps16)
 {
 	width: 125px;
 }
 
-#dpdgeopost_pickup_dialog label sup
+#dpdgroup_pickup_dialog label sup
 {
 	color: red;
 }
 
-#dpdgeopost_pickup_dialog label.required:not(.ps16)
+#dpdgroup_pickup_dialog label.required:not(.ps16)
 {
 	color: red;
 	font-size: 10px;
 }
 
-#dpdgeopost_pickup_dialog .margin-form
+#dpdgroup_pickup_dialog .margin-form
 {
 	padding-top: 3px;
 	padding-left: 150px;
 }
 
-#dpdgeopost_pickup_dialog textarea
+#dpdgroup_pickup_dialog textarea
 {
 	width: 315px;
 	height: 80px;
 }
 
-#dpdgeopost_pickup_dialog .error {
+#dpdgroup_pickup_dialog .error {
 	border-radius: 3px;
 	font-size: 12px;
 	font-weight: normal;

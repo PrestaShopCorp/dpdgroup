@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostPickup extends DpdGeopostWs
+class DpdGroupPickup extends DpdGroupWs
 {
 	protected $service_name = 'PickupOrderServiceImpl';
 
@@ -84,7 +84,7 @@ class DpdGeopostPickup extends DpdGeopostWs
 	{
 		foreach ($pieces as $piece)
 			if (!Db::getInstance()->execute('
-				UPDATE `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+				UPDATE `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 				SET `date_pickup`="'.pSQL($this->date).' '.pSQL($this->from_time).'"
 				WHERE `id_shipment`='.(int)$piece['id_shipment']))
 				self::$errors[] = sprintf($this->l('Pickup was successfully created, but could not be recorded locally for shipment #%d'),
@@ -108,8 +108,8 @@ class DpdGeopostPickup extends DpdGeopostWs
 
 		foreach ($this->id_shipment as $id_shipment)
 		{
-			$id_order = (int)DpdGeopostShipment::getOrderIdByShipmentId($id_shipment);
-			$shipment = new DpdGeopostShipment($id_order);
+			$id_order = (int)DpdGroupShipment::getOrderIdByShipmentId($id_shipment);
+			$shipment = new DpdGroupShipment($id_order);
 
 			if (!(int)$shipment->id_order)
 			{
@@ -117,14 +117,14 @@ class DpdGeopostPickup extends DpdGeopostWs
 				return false;
 			}
 
-			if (!isset($pieces[$shipment->receiverCountryCode]))
-				$pieces[$shipment->receiverCountryCode] = array();
+			if (!isset($pieces[$shipment->receiver_country_code]))
+				$pieces[$shipment->receiver_country_code] = array();
 
-			$pieces[$shipment->receiverCountryCode][] = array(
-				'serviceCode' => (int)$shipment->mainServiceCode,
+			$pieces[$shipment->receiver_country_code][] = array(
+				'serviceCode' => (int)$shipment->main_service_code,
 				'quantity' => count($shipment->parcels),
 				'weight' => (float)$shipment->getTotalParcelsWeight(),
-				'destinationCountryCode' => $shipment->receiverCountryCode,
+				'destinationCountryCode' => $shipment->receiver_country_code,
 				'id_shipment' => (int)$id_shipment
 			);
 		}

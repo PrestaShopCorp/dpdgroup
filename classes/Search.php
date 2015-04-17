@@ -18,9 +18,9 @@
  *  International Registered Trademark & Property of DPD Polska sp. z o.o.
  */
 
-require_once(_DPDGEOPOST_CLASSES_DIR_.'Mysql.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'Mysql.php');
 
-class DpdGeopostSearch
+class DpdGroupSearch
 {
 	const ADDRESS_FIELD_CITY = 'city';
 	const ADDRESS_FIELD_COUNTRY = 'country';
@@ -42,14 +42,14 @@ class DpdGeopostSearch
 
 	public function __construct()
 	{
-		$this->mysql_model = new DpdGeopostDpdPostcodeMysql();
+		$this->mysql_model = new DpdGroupDpdPostcodeMysql();
 	}
 
 	private function filterAddressInput($array)
 	{
 		if (is_array($array))
 			foreach ($array as &$value)
-				$value = DpdGeopostDpdPostcodeMysql::applyFiltersForAddress($value);
+				$value = DpdGroupDpdPostcodeMysql::applyFiltersForAddress($value);
 
 		return $array;
 	}

@@ -18,7 +18,7 @@
  */
 
 $(document).ready(function(){
-	$('#dpd_shipping_method, #dpdgeopost_id_address').live('change', function(){
+	$('#dpd_shipping_method, #dpdgroup_id_address').live('change', function(){
 
         changeShipmentCreationButtonAccessibility(false);
 
@@ -37,7 +37,7 @@ $(document).ready(function(){
 				  "&id_lang=" + encodeURIComponent(dpd_geopost_id_lang) +
 				  "&calculatePrice=true" +
 				  "&method_id=" + encodeURIComponent(method_id) +
-				  "&id_address=" + encodeURIComponent($('#dpdgeopost_id_address').val()) +
+				  "&id_address=" + encodeURIComponent($('#dpdgroup_id_address').val()) +
 				  "&id_order=" + encodeURIComponent(id_order),
 			success: function(resp)
 			{
@@ -54,7 +54,7 @@ $(document).ready(function(){
 
 				if (response_errors.length || response_notices.length)
 				{
-                    $('#dpdgeopost_notice_container').hide().html('');
+                    $('#dpdgroup_notice_container').hide().html('');
 
 					if (response_notices.length)
 					{
@@ -64,7 +64,7 @@ $(document).ready(function(){
                             if (typeof response_notices[i] !== 'undefined')
                                 notices = notices + response_notices[i]+'<br />';
 
-						$('#dpdgeopost_notice_container').prepend('<p class="warn alert alert-warning">'+notices+'</p>');
+						$('#dpdgroup_notice_container').prepend('<p class="warn alert alert-warning">'+notices+'</p>');
 						changeShipmentCreationButtonAccessibility(true);
 					}
 
@@ -76,33 +76,33 @@ $(document).ready(function(){
                             if (typeof response_errors[j] !== 'undefined')
                                 errors = errors + response_errors[j]+'<br />';
 
-						$('#dpdgeopost_notice_container').prepend('<p class="error alert alert-danger">'+errors+'</p>');
+						$('#dpdgroup_notice_container').prepend('<p class="error alert alert-danger">'+errors+'</p>');
 						changeShipmentCreationButtonAccessibility(false);
 					}
 
-                    $('#dpdgeopost_notice_container').slideDown();
+                    $('#dpdgroup_notice_container').slideDown();
 				}
 				else
 				{
-					$('#dpdgeopost_notice_container').slideUp().html('');
+					$('#dpdgroup_notice_container').slideUp().html('');
 					changeShipmentCreationButtonAccessibility(true);
 				}
 
 				if (resp.price == '---' && !resp.force_enable_button)
 					changeShipmentCreationButtonAccessibility(false);
 
-				if ($('#dpdgeopost_service_price').text() != resp.price)
+				if ($('#dpdgroup_service_price').text() != resp.price)
 				{
-					$('#dpdgeopost_service_price').fadeOut('slow', function(){
-						$('#dpdgeopost_service_price').text(resp.price);
+					$('#dpdgroup_service_price').fadeOut('slow', function(){
+						$('#dpdgroup_service_price').text(resp.price);
 						$(this).fadeIn('slow', function(){});
 					});
 				}
 
-				if (stringToNumber($('#dpdgeopost_paid_price').text()) < stringToNumber(resp.price))
-					$('#dpdgeopost_paid_price, #dpdgeopost_service_price').css('color', 'red');
+				if (stringToNumber($('#dpdgroup_paid_price').text()) < stringToNumber(resp.price))
+					$('#dpdgroup_paid_price, #dpdgroup_service_price').css('color', 'red');
 				else
-					$('#dpdgeopost_paid_price, #dpdgeopost_service_price').css('color', 'inherit');
+					$('#dpdgroup_paid_price, #dpdgroup_service_price').css('color', 'inherit');
 
 				$('#ajax_running').slideUp();
 			},
@@ -116,7 +116,7 @@ $(document).ready(function(){
 
 
 
-	$('#dpdgeopost_shipment_creation_save').live('click', function(){
+	$('#dpdgroup_shipment_creation_save').live('click', function(){
 		$('#ajax_running').slideDown();
 
 		var method_id = $('#dpd_shipping_method').val();
@@ -133,13 +133,13 @@ $(document).ready(function(){
 				  "&id_lang=" + encodeURIComponent(dpd_geopost_id_lang) +
 				  "&saveShipment=true" +
 				  "&method_id=" + encodeURIComponent(method_id) +
-				  "&id_address=" + encodeURIComponent($('#dpdgeopost_id_address').val()) +
+				  "&id_address=" + encodeURIComponent($('#dpdgroup_id_address').val()) +
 				  "&id_order=" + encodeURIComponent(id_order) +
 				  parcels,
 			success: function(resp)
 			{
 				if (resp.error)
-					$('#dpdgeopost_shipment_creation .message_container').hide().html('<p class="error alert alert-danger">'+resp.error+'</p>').slideDown();
+					$('#dpdgroup_shipment_creation .message_container').hide().html('<p class="error alert alert-danger">'+resp.error+'</p>').slideDown();
 				else
 				   window.location.reload();
 
@@ -157,28 +157,28 @@ $(document).ready(function(){
 		updatePercalTotals();
 	});
 
-	$('#dpdgeopost_create_shipment').live('click', function(){
-		$('#dpdgeopost_shipment_creation').bPopup();
+	$('#dpdgroup_create_shipment').live('click', function(){
+		$('#dpdgroup_shipment_creation').bPopup();
 	});
 
-	$('#dpdgeopost_shipment_creation_cancel, #dpdgeopost_shipment_creation_close').live('click', function(){
+	$('#dpdgroup_shipment_creation_cancel, #dpdgroup_shipment_creation_close').live('click', function(){
 		$('div.message_container p.error').css('display', 'none');
-		$('#dpdgeopost_shipment_creation').bPopup().close();
+		$('#dpdgroup_shipment_creation').bPopup().close();
 	});
 
-	$('#dpdgeopost_edit_shipment').live('click', function(){
-		$("#dpdgeopost_shipment_creation :input[value!='']").removeAttr("disabled");
+	$('#dpdgroup_edit_shipment').live('click', function(){
+		$("#dpdgroup_shipment_creation :input[value!='']").removeAttr("disabled");
 		$('.buttons_container').show();
-		$('#dpdgeopost_shipment_creation_close').hide();
-		$('#dpdgeopost_shipment_creation').bPopup();
+		$('#dpdgroup_shipment_creation_close').hide();
+		$('#dpdgroup_shipment_creation').bPopup();
 	});
 
-	$('#dpdgeopost_preview_shipment').live('click', function(){
-		$('#dpdgeopost_shipment_creation .message_container').slideUp().html('');
+	$('#dpdgroup_preview_shipment').live('click', function(){
+		$('#dpdgroup_shipment_creation .message_container').slideUp().html('');
 		$('.buttons_container').hide();
-		$("#dpdgeopost_shipment_creation :input").attr("disabled", true);
-		$('#dpdgeopost_shipment_creation_close').removeAttr('disabled').show();
-		$('#dpdgeopost_shipment_creation').bPopup();
+		$("#dpdgroup_shipment_creation :input").attr("disabled", true);
+		$('#dpdgroup_shipment_creation_close').removeAttr('disabled').show();
+		$('#dpdgroup_shipment_creation').bPopup();
 	});
 
 	$('#parcel_selection_table .parcel_weight').live("change keyup paste", function(){
@@ -252,9 +252,9 @@ function collectParcels()
 function changeShipmentCreationButtonAccessibility(enabled)
 {
 	if (enabled)
-		$('#dpdgeopost_create_shipment').removeAttr('disabled');
+		$('#dpdgroup_create_shipment').removeAttr('disabled');
 	else
-		$('#dpdgeopost_create_shipment').attr('disabled', 'disabled');
+		$('#dpdgroup_create_shipment').attr('disabled', 'disabled');
 }
 
 function deleteShipment()
@@ -275,7 +275,7 @@ function deleteShipment()
 		success: function(resp)
 		{
 			if (resp.error)
-				$('#dpdgeopost_notice_container').hide().html('<p class="error alert alert-danger">'+resp.error+'</p>').slideDown();
+				$('#dpdgroup_notice_container').hide().html('<p class="error alert alert-danger">'+resp.error+'</p>').slideDown();
 			else
 				window.location.reload();
 		}

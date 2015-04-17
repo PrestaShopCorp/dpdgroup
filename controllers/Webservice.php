@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostWS extends DpdGeopostController
+class DpdGroupWS extends DpdGroupController
 {
 	private $client; /* instance of SoapClient class */
 	protected $config;
@@ -35,7 +35,7 @@ class DpdGeopostWS extends DpdGeopostController
 	public static $notices = array();
 
 	const APPLICATION_TYPE = 9;
-	const FILENAME = 'dpdgeopost.ws';
+	const FILENAME = 'dpdgroup.ws';
 	const ID_WEIGHT_ERROR_MESSAGE = 123;
 
 	const DEBUG_FILENAME = 'DPDGEOPOST_DEBUG_FILENAME';
@@ -45,18 +45,19 @@ class DpdGeopostWS extends DpdGeopostController
 	{
 		parent::__construct();
 
-		$this->config = new DpdGeopostConfiguration;
+		$this->config = new DpdGroupConfiguration;
 
-		if ($this->config->dpd_country_select == DpdGeopostConfiguration::OTHER_COUNTRY)
+		if ($this->config->dpd_country_select == DpdGroupConfiguration::OTHER_COUNTRY)
 			$url = $this->config->production_mode ? $this->config->ws_production_url : $this->config->ws_test_url;
 		else
 		{
-			require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Configuration.controller.php');
+			require_once(_DPDGROUP_CONTROLLERS_DIR_.'Configuration.controller.php');
 
-			$configuration_controller = new DpdGeopostConfigurationController();
+			$configuration_controller = new DpdGroupConfigurationController();
 			$configuration_controller->setAvailableCountries();
 			$mode = $this->config->production_mode ? 'ws_uri_prod' : 'ws_uri_test';
-			$url = $configuration_controller->countries[$this->config->dpd_country_select][$mode];
+			$url = isset($configuration_controller->countries[$this->config->dpd_country_select][$mode]) ?
+				$configuration_controller->countries[$this->config->dpd_country_select][$mode] : '';
 		}
 
 		if (!$url)
@@ -234,9 +235,9 @@ class DpdGeopostWS extends DpdGeopostController
 
 	private function getTranslatableMessage($error_code)
 	{
-		require_once(_DPDGEOPOST_MODULE_DIR_.'dpdgeopost.lang.php');
+		require_once(_DPDGROUP_MODULE_DIR_.'dpdgroup.lang.php');
 
-		$language = new DpdGeopostLanguage();
+		$language = new DpdGroupLanguage();
 
 		return $language->getTranslation($error_code);
 	}
@@ -249,9 +250,9 @@ class DpdGeopostWS extends DpdGeopostController
 			Configuration::updateValue(self::DEBUG_FILENAME, $debug_filename);
 		}
 
-		if (!file_exists(_DPDGEOPOST_MODULE_DIR_.$debug_filename))
+		if (!file_exists(_DPDGROUP_MODULE_DIR_.$debug_filename))
 		{
-			$file = fopen(_DPDGEOPOST_MODULE_DIR_.$debug_filename, 'w');
+			$file = fopen(_DPDGROUP_MODULE_DIR_.$debug_filename, 'w');
 			fclose($file);
 		}
 
@@ -302,8 +303,8 @@ class DpdGeopostWS extends DpdGeopostController
 		{
 			$debug_filename = $this->createDebugFileIfNotExists();
 
-			$current_content = Tools::file_get_contents(_DPDGEOPOST_MODULE_DIR_.$debug_filename);
-			file_put_contents(_DPDGEOPOST_MODULE_DIR_.$debug_filename, $debug_html.$current_content, LOCK_EX);
+			$current_content = Tools::file_get_contents(_DPDGROUP_MODULE_DIR_.$debug_filename);
+			file_put_contents(_DPDGROUP_MODULE_DIR_.$debug_filename, $debug_html.$current_content, LOCK_EX);
 		}
 	}
 

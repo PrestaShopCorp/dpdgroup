@@ -18,29 +18,12 @@
  *  International Registered Trademark & Property of DPD Polska sp. z o.o.
  */
 
-include_once(dirname(__FILE__).'/../../config/config.inc.php');
-include_once(dirname(__FILE__).'/../../init.php');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 
-$module_instance = Module::getInstanceByName('dpdgeopost');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-if (Tools::getValue('token') != sha1(_COOKIE_KEY_.$module_instance->name))
-	exit;
-
-if (Tools::isSubmit('printLabels'))
-{
-	$shipment = new DpdGeopostShipment((int)Tools::getValue('id_order'));
-	$pdf_file_contents = $shipment->getLabelsPdf();
-
-	if ($pdf_file_contents)
-	{
-		ob_end_clean();
-		header('Content-type: application/pdf');
-		header('Content-Disposition: attachment; filename="shipment_labels_'.(int)Tools::getValue('id_order').'.pdf"');
-		echo $pdf_file_contents;
-	}
-	else
-	{
-		echo reset(DpdGeopostShipment::$errors);
-		exit;
-	}
-}
+header('Location: ../');
+exit;

@@ -21,16 +21,16 @@
 include_once(dirname(__FILE__).'/../../config/config.inc.php');
 include_once(dirname(__FILE__).'/../../init.php');
 
-$module_instance = Module::getInstanceByName('dpdgeopost');
-$filename = 'dpdgeopost.ajax';
+$module_instance = Module::getInstanceByName('dpdgroup');
+$filename = 'dpdgroup.ajax';
 
-if (Tools::getValue('token') != sha1(_COOKIE_KEY_.$module_instance->name) || !$module_instance instanceof DpdGeopost)
+if (Tools::getValue('token') != sha1(_COOKIE_KEY_.$module_instance->name) || !$module_instance instanceof DpdGroup)
 	exit;
 
 if (Tools::isSubmit('testConnectivity'))
 {
-	require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Configuration.controller.php');
-	$configuration_controller = new DpdGeopostConfigurationController();
+	require_once(_DPDGROUP_CONTROLLERS_DIR_.'Configuration.controller.php');
+	$configuration_controller = new DpdGroupConfigurationController();
 
 	if ((int)Tools::getValue('other_country'))
 	{
@@ -48,24 +48,24 @@ if (Tools::isSubmit('testConnectivity'))
 
 if (Tools::isSubmit('calculatePrice'))
 {
-	DpdGeopostWS::$parcel_weight_warning_message = false;
+	DpdGroupWS::$parcel_weight_warning_message = false;
 	$id_order = (int)Tools::getValue('id_order');
-	$shipment = new DpdGeopostShipment((int)$id_order);
+	$shipment = new DpdGroupShipment((int)$id_order);
 	$price = $shipment->calculatePriceForOrder((int)Tools::getValue('method_id'), (int)Tools::getValue('id_address'));
 	$errors = array();
 
-	if (DpdGeopostShipment::$errors)
-		foreach (DpdGeopostShipment::$errors as $error)
+	if (DpdGroupShipment::$errors)
+		foreach (DpdGroupShipment::$errors as $error)
 			$errors[] = $error;
 
 	$price = $price !== false ? $price : '---';
-	$notices = DpdGeopostShipment::$notices;
-	$shipment = new DpdGeopostShipment((int)$id_order);
+	$notices = DpdGroupShipment::$notices;
+	$shipment = new DpdGroupShipment((int)$id_order);
 	$order = new Order((int)$id_order);
 	$total_shipping = version_compare(_PS_VERSION_, '1.5', '>=') ? $order->total_shipping_tax_incl : $order->total_shipping;
 
-	if (DpdGeopostShipment::$errors)
-		foreach (DpdGeopostShipment::$errors as $error)
+	if (DpdGroupShipment::$errors)
+		foreach (DpdGroupShipment::$errors as $error)
 			$errors[] = $error;
 
 	if (!$shipment->id_shipment && !(int)Tools::getValue('method_id'))
@@ -78,26 +78,26 @@ if (Tools::isSubmit('calculatePrice'))
 		'price'  => $price,
 		'error'  => array_unique($errors),
 		'notice' => array_unique($notices),
-		'force_enable_button' => (int)DpdGeopostWS::$parcel_weight_warning_message
+		'force_enable_button' => (int)DpdGroupWS::$parcel_weight_warning_message
 	)));
 }
 
 if (Tools::isSubmit('saveShipment'))
 {
-	$shipment = new DpdGeopostShipment((int)Tools::getValue('id_order'));
+	$shipment = new DpdGroupShipment((int)Tools::getValue('id_order'));
 	$message = $shipment->save((int)Tools::getValue('method_id'), (int)Tools::getValue('id_address'), Tools::getValue('parcels'));
 
-	if ($message && !DpdGeopostShipment::$errors)
+	if ($message && !DpdGroupShipment::$errors)
 		$module_instance->addFlashMessage($message);
 
 	$error_messages = '';
 
-	if (DpdGeopostShipment::$errors)
-		foreach (DpdGeopostShipment::$errors as $error)
+	if (DpdGroupShipment::$errors)
+		foreach (DpdGroupShipment::$errors as $error)
 			$error_messages .= $error.'<br />';
 
-	if (DpdGeopostShipment::$notices)
-		foreach (DpdGeopostShipment::$notices as $error)
+	if (DpdGroupShipment::$notices)
+		foreach (DpdGroupShipment::$notices as $error)
 			$error_messages .= $error.'<br />';
 
 	die(Tools::jsonEncode(array(
@@ -107,20 +107,20 @@ if (Tools::isSubmit('saveShipment'))
 
 if (Tools::isSubmit('deleteShipment'))
 {
-	$shipment = new DpdGeopostShipment((int)Tools::getValue('id_order'));
+	$shipment = new DpdGroupShipment((int)Tools::getValue('id_order'));
 
 	if ($result = $shipment->delete())
 		$module_instance->addFlashMessage($module_instance->l('Shipment successfully deleted', $filename));
 
 	die(Tools::jsonEncode(array(
-		'error' => $result ? null : reset(DpdGeopostShipment::$errors)
+		'error' => $result ? null : reset(DpdGroupShipment::$errors)
 	)));
 }
 
 if (Tools::isSubmit('arrangePickup'))
 {
-	$pickup_data = Tools::getValue('dpdgeopost_pickup_data');
-	$pickup = new DpdGeopostPickup;
+	$pickup_data = Tools::getValue('dpdgroup_pickup_data');
+	$pickup = new DpdGroupPickup;
 	$pickup->id_shipment = Tools::getValue('shipmentIds');
 	$pickup->date = isset($pickup_data['date']) ? $pickup_data['date'] : null;
 	$pickup->from_time = isset($pickup_data['from_time']) ? $pickup_data['from_time'] : null;
@@ -138,10 +138,10 @@ if (Tools::isSubmit('arrangePickup'))
 
 	$shipment_errors = '';
 
-	foreach (DpdGeopostShipment::$errors as $error_message)
+	foreach (DpdGroupShipment::$errors as $error_message)
 		$shipment_errors .= $error_message.'<br />';
 
-	foreach (DpdGeopostShipment::$notices as $notice)
+	foreach (DpdGroupShipment::$notices as $notice)
 		$shipment_errors .= $notice.'<br />';
 
 	die(Tools::jsonEncode(array(
@@ -153,17 +153,17 @@ if (Tools::isSubmit('arrangePickup'))
 if (Tools::isSubmit('downloadModuleCSVSettings'))
 {
 	include_once(dirname(__FILE__).'/controllers/Csv.controller.php');
-	$controller = new DpdGeopostCSVController;
+	$controller = new DpdGroupCSVController;
 	$controller->generateCSV();
 }
 
 if (Tools::getValue('action') == 'postcode-recommendation')
 {
-	require_once(_DPDGEOPOST_CLASSES_DIR_.'PostcodeSearch.php');
-	require_once(_DPDGEOPOST_CLASSES_DIR_.'Address.php');
-	require_once(_DPDGEOPOST_CLASSES_DIR_.'Mysql.php');
-	require_once(_DPDGEOPOST_CLASSES_DIR_.'CachedData.php');
-	require_once(_DPDGEOPOST_CLASSES_DIR_.'PostcodeSearch.php');
+	require_once(_DPDGROUP_CLASSES_DIR_.'PostcodeSearch.php');
+	require_once(_DPDGROUP_CLASSES_DIR_.'Address.php');
+	require_once(_DPDGROUP_CLASSES_DIR_.'Mysql.php');
+	require_once(_DPDGROUP_CLASSES_DIR_.'CachedData.php');
+	require_once(_DPDGROUP_CLASSES_DIR_.'PostcodeSearch.php');
 
 	$data = array();
 	$address = array(
@@ -174,7 +174,7 @@ if (Tools::getValue('action') == 'postcode-recommendation')
 		'address' => Tools::getValue('address1').' '.Tools::getValue('address2')
 	);
 
-	$postcode_search = new DpdGeopostPostcodeSearch();
+	$postcode_search = new DpdGroupPostcodeSearch();
 	$results = $postcode_search->findAllSimilarAddressesForAddress($address);
 
 	if (!$results)
@@ -196,11 +196,11 @@ if (Tools::getValue('action') == 'validate_postcode')
 	$psotcode = Tools::getValue('dpdpostcode');
 	$result = true;
 
-	require_once(_DPDGEOPOST_CLASSES_DIR_.'Mysql.php');
+	require_once(_DPDGROUP_CLASSES_DIR_.'Mysql.php');
 
-	$model = new DpdGeopostDpdPostcodeMysql();
+	$model = new DpdGroupDpdPostcodeMysql();
 
-	if (!DpdGeopostDpdPostcodeMysql::postcodeExistsInDB($psotcode))
+	if (!DpdGroupDpdPostcodeMysql::postcodeExistsInDB($psotcode))
 		$result = false;
 
 	die(Tools::jsonEncode(array('is_valid' => $result)));

@@ -38,25 +38,25 @@
 				<li>
 					<a id="shipment_list_page" href="{$module_link|escape:'htmlall':'UTF-8'}&menu=shipment_list" class="toolbar_btn">
 						<span class="process-icon-shipment_list shipment_list"></span>
-						<div>{l s='Shipment list' mod='dpdgeopost'}</div>
+						<div>{l s='Shipment list' mod='dpdgroup'}</div>
 					</a>
 				</li>
 				<li>
 					<a id="csv_page" href="{$module_link|escape:'htmlall':'UTF-8'}&menu=csv" class="toolbar_btn">
 						<span class="process-icon-csv csv"></span>
-						<div>{l s='Price rules' mod='dpdgeopost'}</div>
+						<div>{l s='Price rules' mod='dpdgroup'}</div>
 					</a>
 				</li>
 				<li>
 					<a id="settings_page" href="{$module_link|escape:'htmlall':'UTF-8'}&menu=configuration" class="toolbar_btn">
 						<span class="process-icon-settings settings"></span>
-						<div>{l s='Settings' mod='dpdgeopost'}</div>
+						<div>{l s='Settings' mod='dpdgroup'}</div>
 					</a>
 				</li>
 				<li>
 					<a id="help_page" href="{$module_link|escape:'htmlall':'UTF-8'}&menu=help" class="toolbar_btn">
 						<span class="process-icon-help help"></span>
-						<div>{l s='Help' mod='dpdgeopost'}</div>
+						<div>{l s='Help' mod='dpdgroup'}</div>
 					</a>
 				</li>
 			</ul>
@@ -66,7 +66,7 @@
 						<span class="breadcrumb item-0 ">
 							{section name=breadcrumb_iteration loop=$path}
 								{if $smarty.section.breadcrumb_iteration.index != 0}
-									<img src="{$smarty.const._DPDGEOPOST_IMG_URI_|escape:'htmlall':'UTF-8'}/separator_breadcrumb.png" style="margin-right:5px" alt=">">
+									<img src="{$smarty.const._DPDGROUP_IMG_URI_|escape:'htmlall':'UTF-8'}/separator_breadcrumb.png" style="margin-right:5px" alt=">">
 								{/if}
 								<span class="breadcrumb item-1">
 									{$path[breadcrumb_iteration]|escape:'htmlall':'UTF-8'}

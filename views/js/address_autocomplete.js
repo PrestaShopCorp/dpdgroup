@@ -75,7 +75,7 @@ function postcodeValidation()
 {
     hidePostcodeValidationError();
 
-    if ($('select#id_country').val() == id_dpdgeopost_romania_country && !validatePostcode())
+    if ($('select#id_country').val() == id_dpdgroup_romania_country && !validatePostcode())
         displayPostcodeValidationError();
 }
 
@@ -104,7 +104,7 @@ function validatePostcode()
 
 function addRomaniaPostcodeSearchLink()
 {
-	if ($('select#id_country').val() != id_dpdgeopost_romania_country)
+	if ($('select#id_country').val() != id_dpdgroup_romania_country)
 	{
 		$('#refresh-postcode').parent().remove();
 		return false;

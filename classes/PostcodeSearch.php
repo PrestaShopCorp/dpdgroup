@@ -18,10 +18,10 @@
  *  International Registered Trademark & Property of DPD Polska sp. z o.o.
  */
 
-require_once(_DPDGEOPOST_CLASSES_DIR_.'Address.php');
-require_once(_DPDGEOPOST_CLASSES_DIR_.'Search.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'Address.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'Search.php');
 
-class DpdGeopostPostcodeSearch
+class DpdGroupPostcodeSearch
 {
 	const MIN_POSTCODE_LENGTH = 4;
 
@@ -29,8 +29,8 @@ class DpdGeopostPostcodeSearch
 
 	private static function getInstance()
 	{
-		if (!self::$instance instanceof DpdGeopostSearch)
-			self::$instance = new DpdGeopostSearch();
+		if (!self::$instance instanceof DpdGroupSearch)
+			self::$instance = new DpdGroupSearch();
 
 		return self::$instance;
 	}
@@ -60,7 +60,7 @@ class DpdGeopostPostcodeSearch
 
 		if ($this->isEnabledAutocompleteForPostcode($country_name))
 		{
-			$dpd_postcode_address = new DpdGeopostDpdPostcodeAddress();
+			$dpd_postcode_address = new DpdGroupDpdPostcodeAddress();
 			$dpd_postcode_address->loadDpdAddressByAddressId($address_object->id);
 			$current_hash = $this->generateAddressHash($address);
 
@@ -154,7 +154,7 @@ class DpdGeopostPostcodeSearch
 
 			if (empty($address['region']))
 			{
-				$regions = DpdGeopostDpdPostcodeMysql::identifyRegionByCity($address['city']);
+				$regions = DpdGroupDpdPostcodeMysql::identifyRegionByCity($address['city']);
 
 				if ($regions && count($regions) == 1)
 					$address['region'] = array_pop($regions);
@@ -198,7 +198,7 @@ class DpdGeopostPostcodeSearch
 		if (!Validate::isPostCode($post_code) || empty($relevance))
 			return false;
 
-		if (!empty($relevance->percent) && $relevance->percent > DpdGeopostSearch::SEARCH_RESULT_RELEVANCE_THRESHOLD_FOR_VALIDATION)
+		if (!empty($relevance->percent) && $relevance->percent > DpdGroupSearch::SEARCH_RESULT_RELEVANCE_THRESHOLD_FOR_VALIDATION)
 			return true;
 
 		return false;
@@ -206,6 +206,6 @@ class DpdGeopostPostcodeSearch
 
 	private function isEnabledAutocompleteForPostcode($country_name)
 	{
-		return DpdGeopostDpdPostcodeMysql::applyFiltersForAddress($country_name) == DpdGeopostSearch::ENABLED_COUNTRY;
+		return DpdGroupDpdPostcodeMysql::applyFiltersForAddress($country_name) == DpdGroupSearch::ENABLED_COUNTRY;
 	}
 }

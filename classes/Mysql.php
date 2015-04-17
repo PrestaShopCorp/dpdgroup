@@ -18,15 +18,15 @@
  *  International Registered Trademark & Property of DPD Polska sp. z o.o.
  */
 
-require_once(_DPDGEOPOST_CLASSES_DIR_.'CachedData.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'CachedData.php');
 
-class DpdGeopostDpdPostcodeMysql
+class DpdGroupDpdPostcodeMysql
 {
 	const MIN_ADDRESS_WORD_LENGTH = 4;
 
 	public function searchSimilarAddresses($address)
 	{
-		if (empty($address[DpdGeopostSearch::ADDRESS_FIELD_CITY]))
+		if (empty($address[DpdGroupSearch::ADDRESS_FIELD_CITY]))
 			return false;
 
 		$this->processRegionAndCity($address);
@@ -35,15 +35,15 @@ class DpdGeopostDpdPostcodeMysql
 		if ($strict_search > 0)
 			return $this->strictSearch($address, false);
 
-		$region = $address[DpdGeopostSearch::ADDRESS_FIELD_REGION];
-		$city = $address[DpdGeopostSearch::ADDRESS_FIELD_CITY];
+		$region = $address[DpdGroupSearch::ADDRESS_FIELD_REGION];
+		$city = $address[DpdGroupSearch::ADDRESS_FIELD_CITY];
 
 		return DB::getInstance()->executeS('
 			SELECT `id_postcode`, `postcode`, `region`, `city`, `road_type`, `address`, `d_depo`, `d_sort`, `zone`, `saturday`, `route`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `region` LIKE "%'.pSQL($region).'%"
 				AND `city` LIKE "%'.pSQL($city).'%"
-			LIMIT '.(DpdGeopostSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD + 1)
+			LIMIT '.(DpdGroupSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD + 1)
 		);
 	}
 
@@ -51,7 +51,7 @@ class DpdGeopostDpdPostcodeMysql
 	{
 		$regions = DB::getInstance()->executeS('
 			SELECT DISTINCT `region`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `city` = "'.pSQL($city).'"
 		');
 
@@ -111,19 +111,19 @@ class DpdGeopostDpdPostcodeMysql
 	 */
 	private function tryLocateAtLeastTheCity($address, stdClass $relevance = null)
 	{
-		if (empty($address[DpdGeopostSearch::ADDRESS_FIELD_CITY]) || empty($address[DpdGeopostSearch::ADDRESS_FIELD_REGION]))
+		if (empty($address[DpdGroupSearch::ADDRESS_FIELD_CITY]) || empty($address[DpdGroupSearch::ADDRESS_FIELD_REGION]))
 			return false;
 
 		$results = DB::getInstance()->executeS('
 			SELECT `id_postcode`, `postcode`, `region`, `city`, `road_type`, `address`, `d_depo`, `d_sort`, `zone`, `saturday`, `route`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
-			WHERE `region` LIKE "%'.pSQL($address[DpdGeopostSearch::ADDRESS_FIELD_REGION]).'%"
-				AND `city` LIKE "%'.pSQL($address[DpdGeopostSearch::ADDRESS_FIELD_CITY]).'%"
-			LIMIT '.((int)DpdGeopostSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD + 1));
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
+			WHERE `region` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_REGION]).'%"
+				AND `city` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_CITY]).'%"
+			LIMIT '.((int)DpdGroupSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD + 1));
 
-		if (count($results) > DpdGeopostSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD)
+		if (count($results) > DpdGroupSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD)
 		{
-			if (DpdGeopostSearch::SEARCH_CAN_RETURN_RANDOM_VALUES)
+			if (DpdGroupSearch::SEARCH_CAN_RETURN_RANDOM_VALUES)
 			{
 				$relevance->percent = 60;
 
@@ -174,8 +174,8 @@ class DpdGeopostDpdPostcodeMysql
 
 			return $this->returnPostalCode($results);
 		}
-		elseif ($strict_search < DpdGeopostSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD
-			&&	$strict_search > DpdGeopostSearch::SEARCH_APPLY_SIMILARITY_MIN_THRESHOLD)
+		elseif ($strict_search < DpdGroupSearch::SEARCH_APPLY_SIMILARITY_MAX_THRESHOLD
+			&&	$strict_search > DpdGroupSearch::SEARCH_APPLY_SIMILARITY_MIN_THRESHOLD)
 		{
 			$strict_search = $this->strictSearch($address, false);
 			$results = $this->processSimilarity($address, $strict_search);
@@ -189,20 +189,20 @@ class DpdGeopostDpdPostcodeMysql
 
 	private function processRegionAndCity(array &$address)
 	{
-		$old_city = $address[DpdGeopostSearch::ADDRESS_FIELD_CITY];
-		$old_region = $address[DpdGeopostSearch::ADDRESS_FIELD_REGION];
-		$valid_city = $this->isCityValid($address[DpdGeopostSearch::ADDRESS_FIELD_CITY]);
+		$old_city = $address[DpdGroupSearch::ADDRESS_FIELD_CITY];
+		$old_region = $address[DpdGroupSearch::ADDRESS_FIELD_REGION];
+		$valid_city = $this->isCityValid($address[DpdGroupSearch::ADDRESS_FIELD_CITY]);
 
 		if ($valid_city == 0 && Tools::strlen($old_city) > 2)
-			$address[DpdGeopostSearch::ADDRESS_FIELD_CITY] = $this->processCitySimilarity($address[DpdGeopostSearch::ADDRESS_FIELD_CITY]);
+			$address[DpdGroupSearch::ADDRESS_FIELD_CITY] = $this->processCitySimilarity($address[DpdGroupSearch::ADDRESS_FIELD_CITY]);
 
-		$valid_region = $this->isRegionValid($address[DpdGeopostSearch::ADDRESS_FIELD_REGION]);
+		$valid_region = $this->isRegionValid($address[DpdGroupSearch::ADDRESS_FIELD_REGION]);
 
 		if ($valid_region == 0 && Tools::strlen($old_region) > 1)
-			$address[DpdGeopostSearch::ADDRESS_FIELD_REGION] = $this->processRegionSimilarity($address[DpdGeopostSearch::ADDRESS_FIELD_REGION]);
+			$address[DpdGroupSearch::ADDRESS_FIELD_REGION] = $this->processRegionSimilarity($address[DpdGroupSearch::ADDRESS_FIELD_REGION]);
 
-		if ($old_city == $address[DpdGeopostSearch::ADDRESS_FIELD_CITY]
-			&& $old_region == $address[DpdGeopostSearch::ADDRESS_FIELD_REGION])
+		if ($old_city == $address[DpdGroupSearch::ADDRESS_FIELD_CITY]
+			&& $old_region == $address[DpdGroupSearch::ADDRESS_FIELD_REGION])
 			return false;
 
 		return true;
@@ -221,14 +221,14 @@ class DpdGeopostDpdPostcodeMysql
 		{
 			$tmp = array_pop($results);
 
-			return !empty($tmp[DpdGeopostSearch::ADDRESS_FIELD_POSTCODE]) ? (string)$tmp[DpdGeopostSearch::ADDRESS_FIELD_POSTCODE] : 'false';
+			return !empty($tmp[DpdGroupSearch::ADDRESS_FIELD_POSTCODE]) ? (string)$tmp[DpdGroupSearch::ADDRESS_FIELD_POSTCODE] : 'false';
 		}
 
 		if (is_array($results) && count($results) > 1)
 		{
 			$tmp = $results;
 
-			return !empty($tmp[DpdGeopostSearch::ADDRESS_FIELD_POSTCODE]) ? (string)$tmp[DpdGeopostSearch::ADDRESS_FIELD_POSTCODE] : 'false';
+			return !empty($tmp[DpdGroupSearch::ADDRESS_FIELD_POSTCODE]) ? (string)$tmp[DpdGroupSearch::ADDRESS_FIELD_POSTCODE] : 'false';
 		}
 
 		return false;
@@ -282,10 +282,10 @@ class DpdGeopostDpdPostcodeMysql
 			foreach ($found_house_numbers as $key)
 			{
 				// we have to ensure that the result is not false positive case
-				if ($similarity_array[$key] > $similarity_average - $delta * DpdGeopostSearch::SEARCH_HOUSE_NUMBER_CONSTANT1)
+				if ($similarity_array[$key] > $similarity_average - $delta * DpdGroupSearch::SEARCH_HOUSE_NUMBER_CONSTANT1)
 				{
 					//we have to be sure that this result will be increased enough
-					$similarity_array[$key] += $delta * DpdGeopostSearch::SEARCH_HOUSE_NUMBER_CONSTANT2;
+					$similarity_array[$key] += $delta * DpdGroupSearch::SEARCH_HOUSE_NUMBER_CONSTANT2;
 				}
 			}
 		}
@@ -362,9 +362,9 @@ class DpdGeopostDpdPostcodeMysql
 	 */
 	public function findHouseNumber($address)
 	{
-		$can_skip_words = DpdGeopostSearch::SEARCH_HOUSE_NUMBER_IDENTIFIER_CAN_SKIP_WORDS;
+		$can_skip_words = DpdGroupSearch::SEARCH_HOUSE_NUMBER_IDENTIFIER_CAN_SKIP_WORDS;
 		$numbers = array();
-		$house_number_identifiers = DpdGeopostSearchModelCachedData::getHouseNumberIdentifier();
+		$house_number_identifiers = DpdGroupSearchModelCachedData::getHouseNumberIdentifier();
 		$house_number = null;
 		$address = str_replace('.', ' ', $address);
 		$address = str_replace('/', ' ', $address);
@@ -417,7 +417,7 @@ class DpdGeopostDpdPostcodeMysql
 	{
 		return (int)DB::getInstance()->getValue('
 			SELECT  COUNT(*) AS count
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `city` = "'.pSQL($city_name).'"
 		');
 	}
@@ -433,7 +433,7 @@ class DpdGeopostDpdPostcodeMysql
 	{
 		return (int)DB::getInstance()->getValue('
 			SELECT  COUNT(*) AS count
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `region` = "'.pSQL($region_name).'"
 		');
 	}
@@ -451,7 +451,7 @@ class DpdGeopostDpdPostcodeMysql
 	private function processCitySimilarity($city_input)
 	{
 		//use cached database
-		$cities = DpdGeopostSearchModelCachedData::getCities();
+		$cities = DpdGroupSearchModelCachedData::getCities();
 
 		if (!empty($cities))
 		{
@@ -470,13 +470,13 @@ class DpdGeopostDpdPostcodeMysql
 			$maxs = array_keys($similarity_array, max($similarity_array));
 			$max  = $maxs[0];
 
-			if (!empty($results[$max]) && max($similarity_array) >= DpdGeopostSearch::SEARCH_APPLY_SIMILARITY_CITY_PERCENTAGE_THRESHOLD)
+			if (!empty($results[$max]) && max($similarity_array) >= DpdGroupSearch::SEARCH_APPLY_SIMILARITY_CITY_PERCENTAGE_THRESHOLD)
 				return $results[$max];
 		}
 
 		$cities = DB::getInstance()->executeS('
 			SELECT DISTINCT `city`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 		');
 
 		$results = array();
@@ -513,7 +513,7 @@ class DpdGeopostDpdPostcodeMysql
 	private function processRegionSimilarity($region_input)
 	{
 		//use cached database
-		$regions = DpdGeopostSearchModelCachedData::getRegions();
+		$regions = DpdGroupSearchModelCachedData::getRegions();
 
 		if (!empty($regions))
 		{
@@ -532,13 +532,13 @@ class DpdGeopostDpdPostcodeMysql
 			$maxs = array_keys($similarity_array, max($similarity_array));
 			$max  = $maxs[0];
 
-			if (!empty($results[$max]) && max($similarity_array) >= DpdGeopostSearch::SEARCH_APPLY_SIMILARITY_CITY_PERCENTAGE_THRESHOLD)
+			if (!empty($results[$max]) && max($similarity_array) >= DpdGroupSearch::SEARCH_APPLY_SIMILARITY_CITY_PERCENTAGE_THRESHOLD)
 				return $results[$max];
 		}
 
 		$regions = DB::getInstance()->executeS('
 			SELECT DISTINCT `region`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 		');
 
 		$similarity_array = array();
@@ -573,13 +573,13 @@ class DpdGeopostDpdPostcodeMysql
 	 */
 	private function strictSearch($address, $count = true)
 	{
-		$street = $address[DpdGeopostSearch::ADDRESS_FIELD_ADDRESS];
+		$street = $address[DpdGroupSearch::ADDRESS_FIELD_ADDRESS];
 		$words = explode(' ', $street);
 
 		$sql = 'SELECT '.($count === true ? ' COUNT(*) AS count ' : ' * ').'
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
-			WHERE `region` LIKE "%'.pSQL($address[DpdGeopostSearch::ADDRESS_FIELD_REGION]).'%"
-				AND `city` LIKE "%'.pSQL($address[DpdGeopostSearch::ADDRESS_FIELD_REGION]).'%"';
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
+			WHERE `region` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_REGION]).'%"
+				AND `city` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_REGION]).'%"';
 
 		$words_new = array();
 
@@ -609,7 +609,7 @@ class DpdGeopostDpdPostcodeMysql
 		if (count($words_new))
 			$sql .= ' ) ';
 
-		$sql = $sql.' LIMIT '.(int)DpdGeopostSearch::STRICT_SEARCH_LIMIT;
+		$sql = $sql.' LIMIT '.(int)DpdGroupSearch::STRICT_SEARCH_LIMIT;
 		$results = array();
 		$postcode_data = DB::getInstance()->executeS($sql);
 
@@ -635,10 +635,11 @@ class DpdGeopostDpdPostcodeMysql
 
 	private static function applyTextFilter($string)
 	{
-		$search = array('Ă', 'ă', 'Â', 'â', 'Î', 'î', 'Ş', 'ş', 'Ţ', 'ţ',	'Ş', 'ş', 'Ţ', 'ţ',"\s", "\t","\r\n");
+		$empty = ''; //used to avoid PrestaShop validator error of double quotes
+		$search = array('Ă', 'ă', 'Â', 'â', 'Î', 'î', 'Ş', 'ş', 'Ţ', 'ţ',	'Ş', 'ş', 'Ţ', 'ţ',"\s$empty", "\t$empty","\r\n$empty");
 		$replace = array('A', 'a', 'A', 'a', 'I', 'i', 'S', 's', 'T', 't', 'S', 's', 'T', 't', ' ', ' ', ' ');
 		$string = str_replace($search, $replace, $string);
-		$temp = @iconv('utf-8', 'ascii//TRANSLIT', $string);
+		$temp = iconv('utf-8', 'ascii//TRANSLIT', $string);
 
 		if (!empty($temp))
 			$string = $temp;
@@ -653,7 +654,7 @@ class DpdGeopostDpdPostcodeMysql
 	{
 		return DB::getInstance()->getValue('
 			SELECT COUNT(`postcode`)
-			FROM `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `postcode` = "'.pSQL($postcode).'"
 		');
 	}

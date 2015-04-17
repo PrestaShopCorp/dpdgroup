@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostController
+class DpdGroupController
 {
 	protected $context;
 
@@ -38,7 +38,7 @@ class DpdGeopostController
 	public function __construct()
 	{
 		$this->context = Context::getContext();
-		$this->module_instance = Module::getInstanceByName('dpdgeopost');
+		$this->module_instance = Module::getInstanceByName('dpdgroup');
 		$this->child_class_name = get_class($this);
 	}
 

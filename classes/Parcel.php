@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostParcel extends DpdGeopostObjectModel
+class DpdGroupParcel extends DpdGroupObjectModel
 {
 	public $id_parcel;
 
@@ -38,7 +38,7 @@ class DpdGeopostParcel extends DpdGeopostObjectModel
 	public $date_upd;
 
 	public static $definition = array(
-		'table' => _DPDGEOPOST_PARCEL_DB_,
+		'table' => _DPDGROUP_PARCEL_DB_,
 		'primary' => 'id_parcel',
 		'multilang' => false,
 		'multishop' => false,
@@ -56,7 +56,7 @@ class DpdGeopostParcel extends DpdGeopostObjectModel
 	{
 		return Db::getInstance()->executeS('
 			SELECT `parcel_reference_number`, `id_product`, `id_product_attribute`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_PARCEL_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_PARCEL_DB_.'`
 			WHERE `id_order`='.(int)$id_order
 		);
 	}
@@ -97,7 +97,7 @@ class DpdGeopostParcel extends DpdGeopostObjectModel
 	public static function clearOrderParcels($id_order)
 	{
 		return Db::getInstance()->execute('
-			DELETE FROM `'._DB_PREFIX_._DPDGEOPOST_PARCEL_DB_.'`
+			DELETE FROM `'._DB_PREFIX_._DPDGROUP_PARCEL_DB_.'`
 			WHERE `id_order`='.(int)$id_order
 		);
 	}

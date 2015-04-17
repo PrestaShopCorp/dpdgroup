@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostShipment extends DpdGeopostWs
+class DpdGroupShipment extends DpdGroupWs
 {
 	const FILENAME = 'Shipment';
 	const PAYMENT_TYPE = 'Cash';
@@ -56,7 +56,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 					$result = $result['result'];
 
 				if (isset($result['shipmentResultList']) && isset($result['shipmentResultList']['shipment']))
-					$this->data = $result['shipmentResultList']['shipment'];
+					$this->data = $this->formatResponse($result['shipmentResultList']['shipment']);
 
 				/* parcels array must be indexed and sorted by parcel_reference_number, code below makes sure of that */
 				if ($this->parcels)
@@ -64,12 +64,27 @@ class DpdGeopostShipment extends DpdGeopostWs
 					$parcels = (array_values($this->parcels) === $this->parcels) ? $this->parcels : array($this->parcels);
 
 					if (count($this->parcels) > 1)
-						usort($parcels, array('DpdGeopostShipment', 'sortParcelsByReferenceNumber'));
+						usort($parcels, array('DpdGroupShipment', 'sortParcelsByReferenceNumber'));
 
 					$this->parcels = $parcels;
 				}
 			}
 		}
+	}
+
+	private function formatResponse(array $results)
+	{
+		$formated_response = array();
+
+		foreach ($results as $key => $result)
+			if ($key == 'receiverCountryCode')
+				$formated_response['receiver_country_code'] = $result;
+			elseif ($key == 'mainServiceCode')
+				$formated_response['main_service_code'] = $result;
+			else
+				$formated_response[$key] = $result;
+
+		return $formated_response;
 	}
 
 	public function __get($name)
@@ -124,12 +139,12 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 	public function calculate($id_method, $id_address, $parcels, Order $order = null, $extra_params = array())
 	{
-		require_once(_DPDGEOPOST_CLASSES_DIR_.'PostcodeSearch.php');
+		require_once(_DPDGROUP_CLASSES_DIR_.'PostcodeSearch.php');
 
 		$address = new Address($id_address);
 		$country = new Country($address->id_country);
 		$street = $address->address1.($address->address2 ? ' '.$address->address2 : '');
-		$postcode_search = new DpdGeopostPostcodeSearch();
+		$postcode_search = new DpdGroupPostcodeSearch();
 		$postcode = $postcode_search->extractPostCodeForShippingRequest($address);
 
 		$params = array(
@@ -138,7 +153,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 			'receiverCountryCode' => $country->iso_code,
 			'receiverZipCode' => $address->postcode,
 			'receiverCity' => $address->city,
-			'receiverStreet' => Tools::substr($street, 0, (_DPDGEOPOST_MAX_ADDRESS_LENGTH_ - 1)),
+			'receiverStreet' => Tools::substr($street, 0, (_DPDGROUP_MAX_ADDRESS_LENGTH_ - 1)),
 			'receiverHouseNo' => '',
 			'receiverPhoneNo' => $address->phone_mobile ? $address->phone_mobile : $address->phone,
 			'mainServiceCode' => (int)$id_method,
@@ -154,7 +169,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 		if ($order !== null)
 		{
-			$cod_method = Configuration::get(DpdGeopostConfiguration::COD_MODULE);
+			$cod_method = Configuration::get(DpdGroupConfiguration::COD_MODULE);
 
 			if ($cod_method !== null && $order->module == $cod_method)
 			{
@@ -254,7 +269,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 		if ($order !== null)
 		{
-			$cod_method = Configuration::get(DpdGeopostConfiguration::COD_MODULE);
+			$cod_method = Configuration::get(DpdGroupConfiguration::COD_MODULE);
 
 			if ($cod_method !== null && $order->module == $cod_method)
 			{
@@ -291,7 +306,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 	{
 		$reference = DB::getInstance()->getValue('
 			SELECT `reference`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_REFERENCE_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_REFERENCE_DB_.'`
 			WHERE `id_order` = "'.(int)$id_order.'"
 		');
 
@@ -303,7 +318,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 		$reference = Tools::strtoupper(Tools::passwdGen(9, 'NO_NUMERIC'));
 
 		DB::getInstance()->Execute('
-			INSERT INTO `'._DB_PREFIX_._DPDGEOPOST_REFERENCE_DB_.'`
+			INSERT INTO `'._DB_PREFIX_._DPDGROUP_REFERENCE_DB_.'`
 				(`id_order`, `reference`)
 			VALUES
 				("'.(int)$id_order.'", "'.pSQL($reference).'")
@@ -342,7 +357,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 			$this->id_shipment = $result['resultList']['shipmentReference']['id'];
 
 			if (!Db::getInstance()->execute('
-				INSERT INTO `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+				INSERT INTO `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 					(`id_order`, `id_shipment`)
 				VALUES
 					('.(int)$this->id_order.', '.(int)$this->id_shipment.')
@@ -412,8 +427,8 @@ class DpdGeopostShipment extends DpdGeopostWs
 		if (!reset(self::$errors))
 		{
 			if (!Db::getInstance()->execute('
-				DELETE FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
-				WHERE `id_order` = "'.(int)$this->id_order.'"') || !DpdGeopostParcel::clearOrderParcels((int)$this->id_order))
+				DELETE FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
+				WHERE `id_order` = "'.(int)$this->id_order.'"') || !DpdGroupParcel::clearOrderParcels((int)$this->id_order))
 			{
 				self::$errors[] = $this->l('Shipment could not be deleted locally');
 				return false;
@@ -433,11 +448,11 @@ class DpdGeopostShipment extends DpdGeopostWs
 		if (!$shipment_ids)
 			$shipment_ids = array($this->id_shipment);
 
-		$cod_method = Configuration::get(DpdGeopostConfiguration::COD_MODULE);
+		$cod_method = Configuration::get(DpdGroupConfiguration::COD_MODULE);
 
 		foreach ($shipment_ids as $id_shipment)
 		{
-			$shipment = new DpdGeopostShipment((int)$id_shipment);
+			$shipment = new DpdGroupShipment((int)$id_shipment);
 			$order = new Order($shipment->id_order);
 
 			if ($cod_method !== null && $order->module == $cod_method)
@@ -619,7 +634,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 	private function saveParcelsLocally($data, $id_order)
 	{
-		DpdGeopostParcel::clearOrderParcels($id_order);
+		DpdGroupParcel::clearOrderParcels($id_order);
 
 		foreach ($data as $parcel)
 		{
@@ -629,7 +644,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 			{
 				list($id_product, $id_product_attribute) = explode('_', trim($product));
 
-				$dpd_parcel = new DpdGeopostParcel;
+				$dpd_parcel = new DpdGroupParcel;
 				$dpd_parcel->id_order = (int)$id_order;
 				$dpd_parcel->parcel_reference_number = $parcel['parcelReferenceNumber'];
 				$dpd_parcel->id_product = (int)$id_product;
@@ -672,7 +687,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 			$this->extractAndFormatProductData($product);
 
-			if ($this->config->packaging_method != DpdGeopostConfiguration::PACKAGE_METHOD_ONE_PRODUCT)
+			if ($this->config->packaging_method != DpdGroupConfiguration::PACKAGE_METHOD_ONE_PRODUCT)
 			{
 				for ($i = 0; $i < $quantity; $i++)
 				{
@@ -698,7 +713,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 	public function putProductsToParcels($products)
 	{
 		$parcels = array();
-		$all_products_in_one_parcel = ($this->config->packaging_method == DpdGeopostConfiguration::PACKAGE_METHOD_ALL_PRODUCTS) ? true : false;
+		$all_products_in_one_parcel = ($this->config->packaging_method == DpdGroupConfiguration::PACKAGE_METHOD_ALL_PRODUCTS) ? true : false;
 
 		foreach ($products as &$product)
 		{
@@ -737,7 +752,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 	public static function convertWeight($weight)
 	{
-		if (!$conversation_rate = Configuration::get(DpdGeopostConfiguration::WEIGHT_CONVERSATION_RATE))
+		if (!$conversation_rate = Configuration::get(DpdGroupConfiguration::WEIGHT_CONVERSATION_RATE))
 			$conversation_rate = 1;
 
 		return (float)$weight * (float)$conversation_rate;
@@ -748,19 +763,19 @@ class DpdGeopostShipment extends DpdGeopostWs
 		switch ($id_method)
 		{
 			case 1:
-				return Configuration::get(DpdGeopostConfiguration::CARRIER_CLASSIC_ID);
+				return Configuration::get(DpdGroupConfiguration::CARRIER_CLASSIC_ID);
 			case 10:
-				return Configuration::get(DpdGeopostConfiguration::CARRIER_10_ID);
+				return Configuration::get(DpdGroupConfiguration::CARRIER_10_ID);
 			case 9:
-				return Configuration::get(DpdGeopostConfiguration::CARRIER_12_ID);
+				return Configuration::get(DpdGroupConfiguration::CARRIER_12_ID);
 			case 27:
-				return Configuration::get(DpdGeopostConfiguration::CARRIER_SAME_DAY_ID);
+				return Configuration::get(DpdGroupConfiguration::CARRIER_SAME_DAY_ID);
 			case 109:
-				return Configuration::get(DpdGeopostConfiguration::CARRIER_B2C_ID);
+				return Configuration::get(DpdGroupConfiguration::CARRIER_B2C_ID);
 			case 40033:
-				return Configuration::get(DpdGeopostConfiguration::CARRIER_INTERNATIONAL_ID);
+				return Configuration::get(DpdGroupConfiguration::CARRIER_INTERNATIONAL_ID);
 			case 40107:
-				return Configuration::get(DpdGeopostConfiguration::CARRIER_BULGARIA_ID);
+				return Configuration::get(DpdGroupConfiguration::CARRIER_BULGARIA_ID);
 			default:
 				return false;
 		}
@@ -770,7 +785,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 	{
 		return Db::getInstance()->getRow('
 			SELECT `id_order`, `id_shipment`, `id_manifest`, `date_pickup`, `label_printed`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 			WHERE `id_order` = "'.(int)$id_order.'"
 		');
 	}
@@ -810,7 +825,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 				(SELECT car.`name`
 				 FROM `'._DB_PREFIX_.'carrier` car
 				 WHERE car.`id_carrier` = o.`id_carrier`)	AS `carrier`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'` s
+			FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'` s
 			LEFT JOIN `'._DB_PREFIX_.'orders` 				o 	ON (o.`id_order` = s.`id_order`)
 			LEFT JOIN `'._DB_PREFIX_.'address` 				a 	ON (a.`id_address` = o.`id_address_delivery`)'.
 			($this->ps_14 ? ' ' : ' WHERE o.`id_shop` = "'.(int)Context::getContext()->shop->id.'" ').
@@ -835,7 +850,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 	 * @return bool|mixed (array) first matching CSV rule
 	 * @throws PrestaShopDatabaseException
 	 * @internal param $ (float) $total_weight - Current customer cart total products weight
-	 * @internal param $ (int) $id_method - Id one of described carriers IDs used in DpdGeopost module
+	 * @internal param $ (int) $id_method - Id one of described carriers IDs used in DpdGroup module
 	 * @internal param $ (object) $cart - Current customer cart object
 	 * @internal param $ (bool) $is_cod_carrier - is current shipping method COD
 	 *
@@ -873,7 +888,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 		$price_rules = DB::getInstance()->executeS('
 			SELECT `shipping_price`, `shipping_price_percentage`, `currency`, `cod_surcharge`, `cod_surcharge_percentage`, `cod_min_surcharge`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_CSV_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_CSV_DB_.'`
 			WHERE `weight_from` <= '.pSQL($total_weight).'
 				AND `weight_to` >= '.pSQL($total_weight).'
 				AND (`country` = "'.pSQL($country_iso_code).'" OR `country` = "*")
@@ -921,7 +936,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 
 		return DB::getInstance()->getValue('
 			SELECT `id_order`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 			WHERE `id_shipment` = "'.(int)$id_shipment.'"
 		');
 	}
@@ -942,7 +957,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 	private function setLabelPrinted($id_shipment)
 	{
 		return DB::getInstance()->Execute('
-			UPDATE `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+			UPDATE `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 			SET `label_printed` = "1"
 			WHERE `id_shipment` = "'.(int)$id_shipment.'"
 		');
@@ -1001,7 +1016,7 @@ class DpdGeopostShipment extends DpdGeopostWs
 	{
 		return Db::getInstance()->getRow('
 			SELECT `id_order`, `shipment_reference`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 			WHERE `id_shipment` = "'.(int)$id_shipment.'"
 		');
 	}

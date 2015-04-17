@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_'))
 	exit;
 
 
-class DpdGeopostService
+class DpdGroupService
 {
 	const IMG_DIR = 'DPD_services';
 	const IMG_EXTENTION = 'jpg';
@@ -41,7 +41,7 @@ class DpdGeopostService
 
 	public function __construct()
 	{
-		$this->module_instance = Module::getInstanceByName('dpdgeopost');
+		$this->module_instance = Module::getInstanceByName('dpdgroup');
 		$this->continents = array(
 			'1' => self::CONTINENT_EUROPE,
 			'2' => self::CONTINENT_NORTH_AMERICA,
@@ -60,7 +60,7 @@ class DpdGeopostService
 
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
 		{
-			$id_carrier = (int)DpdGeopostCarrier::getIdCarrierByReference((int)$id_carrier);
+			$id_carrier = (int)DpdGroupCarrier::getIdCarrierByReference((int)$id_carrier);
 			$carrier = new Carrier((int)$id_carrier);
 		}
 		else
@@ -75,7 +75,7 @@ class DpdGeopostService
 				return (bool)$carrier->save();
 			}
 
-		$service = new DpdGeopostService();
+		$service = new DpdGroupService();
 
 		$carrier = new Carrier();
 		$carrier->name = $carrier_name;
@@ -92,7 +92,7 @@ class DpdGeopostService
 		$carrier->need_range = 1;
 		$carrier->range_behavior = 1;
 		$carrier->external_module_name = $service->module_instance->name;
-		$carrier->url = _DPDGEOPOST_TRACKING_URL_;
+		$carrier->url = _DPDGROUP_TRACKING_URL_;
 
 		$delay = array();
 
@@ -104,11 +104,11 @@ class DpdGeopostService
 		if (!$carrier->save())
 			return false;
 
-		$dpdgeopost_carrier = new DpdGeopostCarrier();
-		$dpdgeopost_carrier->id_carrier = (int)$carrier->id;
-		$dpdgeopost_carrier->id_reference = (int)$carrier->id;
+		$dpdgroup_carrier = new DpdGroupCarrier();
+		$dpdgroup_carrier->id_carrier = (int)$carrier->id;
+		$dpdgroup_carrier->id_reference = (int)$carrier->id;
 
-		if (!$dpdgeopost_carrier->save())
+		if (!$dpdgroup_carrier->save())
 			return false;
 
 		foreach ($service->continents as $continent => $value)
@@ -144,7 +144,7 @@ class DpdGeopostService
 
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
 		{
-			$id_carrier = (int)DpdGeopostCarrier::getIdCarrierByReference((int)$id_carrier);
+			$id_carrier = (int)DpdGroupCarrier::getIdCarrierByReference((int)$id_carrier);
 			$carrier = new Carrier((int)$id_carrier);
 		}
 		else

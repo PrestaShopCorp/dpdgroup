@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_'))
 	exit;
 
 
-class DpdGeopostShipmentController extends DpdGeopostController
+class DpdGroupShipmentController extends DpdGroupController
 {
 	const DEFAULT_ORDER_BY 	= 'id_shipment';
 	const DEFAULT_ORDER_WAY = 'desc';
@@ -40,14 +40,14 @@ class DpdGeopostShipmentController extends DpdGeopostController
 		{
 			if ($shipment_ids = Tools::getValue('ShipmentsBox'))
 			{
-				$manifest = new DpdGeopostManifest;
+				$manifest = new DpdGroupManifest;
 				$manifest->shipments = $shipment_ids;
 
 				if ($pdf_content = $manifest->printManifest())
 				{
 					foreach ($shipment_ids as $id_shipment)
 					{
-						$shipment = new DpdGeopostShipment;
+						$shipment = new DpdGroupShipment;
 						$shipment->getAndSaveTrackingInfo((int)$id_shipment);
 					}
 
@@ -61,7 +61,7 @@ class DpdGeopostShipmentController extends DpdGeopostController
 				{
 					$this->module_instance->outputHTML(
 						$this->module_instance->displayError(
-							reset(DpdGeopostManifest::$errors)
+							reset(DpdGroupManifest::$errors)
 						)
 					);
 				}
@@ -74,7 +74,7 @@ class DpdGeopostShipmentController extends DpdGeopostController
 		{
 			if ($shipment_ids = Tools::getValue('ShipmentsBox'))
 			{
-				$shipment = new DpdGeopostShipment;
+				$shipment = new DpdGroupShipment;
 
 				if ($pdf_content = $shipment->getLabelsPdf($shipment_ids))
 				{
@@ -87,7 +87,7 @@ class DpdGeopostShipmentController extends DpdGeopostController
 				{
 					$this->module_instance->outputHTML(
 						$this->module_instance->displayError(
-							reset(DpdGeopostManifest::$errors)
+							reset(DpdGroupManifest::$errors)
 						)
 					);
 				}
@@ -108,7 +108,7 @@ class DpdGeopostShipmentController extends DpdGeopostController
 			{
 				foreach ($shipment_ids as $id_shipment)
 				{
-					$id_order = DpdGeopostShipment::getOrderIdByShipmentId((int)$id_shipment);
+					$id_order = DpdGroupShipment::getOrderIdByShipmentId((int)$id_shipment);
 
 					if (!self::changeOrderStatusToShipped($id_order))
 					{
@@ -127,7 +127,7 @@ class DpdGeopostShipmentController extends DpdGeopostController
 				}
 				else
 				{
-					DpdGeopost::addFlashMessage($this->l('Selected orders statuses were successfully updated'));
+					DpdGroup::addFlashMessage($this->l('Selected orders statuses were successfully updated'));
 					Tools::redirectAdmin($this->module_instance->module_url.'&menu=shipment_list');
 				}
 			}
@@ -181,7 +181,7 @@ class DpdGeopostShipmentController extends DpdGeopostController
 		$order_by = Tools::getValue('ShipmentOrderBy', self::DEFAULT_ORDER_BY);
 		$order_way = Tools::getValue('ShipmentOrderWay', self::DEFAULT_ORDER_WAY);
 		$filter = $this->getFilterQuery($keys_array, 'Shipments');
-		$shipment = new DpdGeopostShipment();
+		$shipment = new DpdGroupShipment();
 		$shipments = $shipment->getShipmentList($order_by, $order_way, $filter, $start, $selected_pagination);
 		$list_total = count($shipment->getShipmentList($order_by, $order_way, $filter, null, null));
 		$total_pages = ceil($list_total / $selected_pagination);
@@ -209,12 +209,12 @@ class DpdGeopostShipmentController extends DpdGeopostController
 			'list_total'			=> $list_total,
 			'order_by'	   			=> $order_by,
 			'order_way'	  			=> $order_way,
-			'order_link'			=> DpdGeopost::getAdminOrderLink()
+			'order_link'			=> DpdGroup::getAdminOrderLink()
 		));
 
 		$template_filename = version_compare(_PS_VERSION_, '1.6', '>=') ? 'shipment_list_16' : 'shipment_list';
 
-		return $this->context->smarty->fetch(_DPDGEOPOST_TPL_DIR_.'admin/'.$template_filename.'.tpl');
+		return $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/'.$template_filename.'.tpl');
 	}
 
 	public static function changeOrderStatusToShipped($id_order)

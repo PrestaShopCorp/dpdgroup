@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostManifest extends DpdGeopostWs
+class DpdGroupManifest extends DpdGroupWs
 {
 	const REFERENCE_LENGTH = 9;
 
@@ -43,7 +43,7 @@ class DpdGeopostManifest extends DpdGeopostWs
 		foreach ($this->shipments as $id_shipment)
 			if (Db::getInstance()->getValue('
 				SELECT `id_manifest`
-				FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+				FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 				WHERE `id_shipment` = '.(int)$id_shipment))
 				$this->action = 'reprint';
 
@@ -128,7 +128,7 @@ class DpdGeopostManifest extends DpdGeopostWs
 			{
 				$params['referenceNumber'] = DB::getInstance()->getValue('
 					SELECT `reference`
-					FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+					FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 					WHERE `id_shipment` = "'.(int)$id_shipment.'"
 				');
 				$params['id'] = (int)$this->getIdManifestByIdShipment($id_shipment);
@@ -142,7 +142,7 @@ class DpdGeopostManifest extends DpdGeopostWs
 	{
 		return (int)Db::getInstance()->getValue('
 			SELECT `id_manifest`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 			WHERE `id_shipment`='.(int)$id_shipment
 		);
 	}
@@ -159,7 +159,7 @@ class DpdGeopostManifest extends DpdGeopostWs
 
 		foreach ($this->shipments as $id_shipment)
 			if (!Db::getInstance()->execute('
-				UPDATE `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`
+				UPDATE `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`
 				SET
 					`id_manifest` = "'.(int)$this->id_manifest.'",
 					`reference` = "'.pSQL($this->reference).'"

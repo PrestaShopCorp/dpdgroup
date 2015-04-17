@@ -22,23 +22,23 @@ if (!defined('_PS_VERSION_'))
 	exit;
 
 require_once(dirname(__FILE__).'/config.api.php');
-require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Controller.php');
-require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Webservice.php');
-require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Messages.controller.php');
+require_once(_DPDGROUP_CONTROLLERS_DIR_.'Controller.php');
+require_once(_DPDGROUP_CONTROLLERS_DIR_.'Webservice.php');
+require_once(_DPDGROUP_CONTROLLERS_DIR_.'Messages.controller.php');
 
-require_once(_DPDGEOPOST_CLASSES_DIR_.'ObjectModel.php');
-require_once(_DPDGEOPOST_CLASSES_DIR_.'CSV.php');
-require_once(_DPDGEOPOST_CLASSES_DIR_.'Configuration.php');
-require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Shipment.webservice.php');
-require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Manifest.webservice.php');
-require_once(_DPDGEOPOST_CLASSES_DIR_.'Parcel.php');
-require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Pickup.webservice.php');
-require_once(_DPDGEOPOST_CLASSES_DIR_.'Carrier.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'ObjectModel.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'CSV.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'Configuration.php');
+require_once(_DPDGROUP_CONTROLLERS_DIR_.'Shipment.webservice.php');
+require_once(_DPDGROUP_CONTROLLERS_DIR_.'Manifest.webservice.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'Parcel.php');
+require_once(_DPDGROUP_CONTROLLERS_DIR_.'Pickup.webservice.php');
+require_once(_DPDGROUP_CLASSES_DIR_.'Carrier.php');
 
 if (version_compare(_PS_VERSION_, '1.5', '<'))
-	require_once(_DPDGEOPOST_MODULE_DIR_.'backward_compatibility/backward.php');
+	require_once(_DPDGROUP_MODULE_DIR_.'backward_compatibility/backward.php');
 
-class DpdGeopost extends CarrierModule
+class DpdGroup extends CarrierModule
 {
 	private $html = '';
 	public $module_url;
@@ -53,15 +53,16 @@ class DpdGeopost extends CarrierModule
 
 	public function __construct()
 	{
-		$this->name = 'dpdgeopost';
+		$this->name = 'dpdgroup';
 		$this->tab = 'shipping_logistics';
 		$this->version = '0.1.0';
 		$this->author = 'Invertus';
+		$this->module_key = '8f6c90d2a004cd27f552fc11d1152846';
 
 		parent::__construct();
 
-		$this->displayName = $this->l('DPD GeoPost');
-		$this->description = $this->l('DPD GeoPost shipping module');
+		$this->displayName = $this->l('DPD Group');
+		$this->description = $this->l('DPD shipping module');
 
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
 		{
@@ -80,7 +81,8 @@ class DpdGeopost extends CarrierModule
 	public function install()
 	{
 		$hooks = array('paymentTop', 'adminOrder', 'backOfficeHeader');
-		$result = true;
+		$database_table_install_error = false;
+		$price_rules_data_intall_error = false;
 
 		if (!extension_loaded('soap'))
 		{
@@ -100,9 +102,15 @@ class DpdGeopost extends CarrierModule
 			return false;
 		}
 
-		require_once(_DPDGEOPOST_SQL_DIR_.'install.php');
+		require_once(_DPDGROUP_SQL_DIR_.'install.php');
 
-		if (!$result)
+		if ($database_table_install_error)
+		{
+			$this->_errors[] = $this->l('Could not install database tables');
+			return false;
+		}
+
+		if ($price_rules_data_intall_error)
 		{
 			$this->dropTables();
 			$this->_errors[] = $this->l('Could not add default price rules data');
@@ -127,27 +135,27 @@ class DpdGeopost extends CarrierModule
 
 	public function uninstall()
 	{
-		require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Service.php');
+		require_once(_DPDGROUP_CONTROLLERS_DIR_.'Service.php');
 
 		$services = array(
-			DpdGeopostConfiguration::CARRIER_CLASSIC_ID,
-			DpdGeopostConfiguration::CARRIER_10_ID,
-			DpdGeopostConfiguration::CARRIER_12_ID,
-			DpdGeopostConfiguration::CARRIER_SAME_DAY_ID,
-			DpdGeopostConfiguration::CARRIER_B2C_ID,
-			DpdGeopostConfiguration::CARRIER_INTERNATIONAL_ID,
-			DpdGeopostConfiguration::CARRIER_BULGARIA_ID,
-			DpdGeopostConfiguration::CARRIER_CLASSIC_COD_ID,
-			DpdGeopostConfiguration::CARRIER_10_COD_ID,
-			DpdGeopostConfiguration::CARRIER_12_COD_ID,
-			DpdGeopostConfiguration::CARRIER_SAME_DAY_COD_ID,
-			DpdGeopostConfiguration::CARRIER_B2C_COD_ID,
-			DpdGeopostConfiguration::CARRIER_INTERNATIONAL_COD_ID,
-			DpdGeopostConfiguration::CARRIER_BULGARIA_COD_ID
+			DpdGroupConfiguration::CARRIER_CLASSIC_ID,
+			DpdGroupConfiguration::CARRIER_10_ID,
+			DpdGroupConfiguration::CARRIER_12_ID,
+			DpdGroupConfiguration::CARRIER_SAME_DAY_ID,
+			DpdGroupConfiguration::CARRIER_B2C_ID,
+			DpdGroupConfiguration::CARRIER_INTERNATIONAL_ID,
+			DpdGroupConfiguration::CARRIER_BULGARIA_ID,
+			DpdGroupConfiguration::CARRIER_CLASSIC_COD_ID,
+			DpdGroupConfiguration::CARRIER_10_COD_ID,
+			DpdGroupConfiguration::CARRIER_12_COD_ID,
+			DpdGroupConfiguration::CARRIER_SAME_DAY_COD_ID,
+			DpdGroupConfiguration::CARRIER_B2C_COD_ID,
+			DpdGroupConfiguration::CARRIER_INTERNATIONAL_COD_ID,
+			DpdGroupConfiguration::CARRIER_BULGARIA_COD_ID
 		);
 
 		foreach ($services as $id_service)
-			if (!DpdGeopostService::deleteCarrier($id_service))
+			if (!DpdGroupService::deleteCarrier($id_service))
 			{
 				$this->_errors[] = $this->l('Could not delete DPD carrier');
 				return false;
@@ -157,19 +165,19 @@ class DpdGeopost extends CarrierModule
 			parent::uninstall() &&
 			$this->dropTables() &&
 			$this->dropTriggers() &&
-			DpdGeopostConfiguration::deleteConfiguration();
+			DpdGroupConfiguration::deleteConfiguration();
 	}
 
 	private function dropTables()
 	{
 		return DB::getInstance()->Execute('
 			DROP TABLE IF EXISTS
-				`'._DB_PREFIX_._DPDGEOPOST_CSV_DB_.'`,
-				`'._DB_PREFIX_._DPDGEOPOST_PARCEL_DB_.'`,
-				`'._DB_PREFIX_._DPDGEOPOST_CARRIER_DB_.'`,
-				`'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'`,
-				`'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'`,
-				`'._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'`
+				`'._DB_PREFIX_._DPDGROUP_CSV_DB_.'`,
+				`'._DB_PREFIX_._DPDGROUP_PARCEL_DB_.'`,
+				`'._DB_PREFIX_._DPDGROUP_CARRIER_DB_.'`,
+				`'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'`,
+				`'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`,
+				`'._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'`
 		');
 	}
 
@@ -182,10 +190,10 @@ class DpdGeopost extends CarrierModule
 
 	private function setGlobalVariablesForAjax()
 	{
-		require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Csv.controller.php');
+		require_once(_DPDGROUP_CONTROLLERS_DIR_.'Csv.controller.php');
 
 		$this->context->smarty->assign(array(
-			'dpd_geopost_ajax_uri' => _DPDGEOPOST_AJAX_URI_,
+			'dpd_geopost_ajax_uri' => _DPDGROUP_AJAX_URI_,
 			'dpd_geopost_token' => sha1(_COOKIE_KEY_.$this->name),
 			'dpd_geopost_id_shop' => (int)$this->context->shop->id,
 			'dpd_geopost_id_lang' => (int)$this->context->language->id
@@ -202,21 +210,21 @@ class DpdGeopost extends CarrierModule
 
 		if ($this->ps_14)
 		{
-			$this->addJS(_DPDGEOPOST_JS_URI_.'backoffice.js');
-			$this->addCSS(_DPDGEOPOST_CSS_URI_.'backoffice.css');
-			$this->addCSS(_DPDGEOPOST_CSS_URI_.'toolbar.css');
+			$this->addJS(_DPDGROUP_JS_URI_.'backoffice.js');
+			$this->addCSS(_DPDGROUP_CSS_URI_.'backoffice.css');
+			$this->addCSS(_DPDGROUP_CSS_URI_.'toolbar.css');
 		}
 		else
 		{
-			$this->context->controller->addJS(_DPDGEOPOST_JS_URI_.'backoffice.js');
+			$this->context->controller->addJS(_DPDGROUP_JS_URI_.'backoffice.js');
 
 			if (!$this->bootstrap || Tools::getValue('menu') && Tools::getValue('menu') != 'shipment_list')
-				$this->context->controller->addCSS(_DPDGEOPOST_CSS_URI_.'backoffice.css');
+				$this->context->controller->addCSS(_DPDGROUP_CSS_URI_.'backoffice.css');
 		}
 
 		$this->setGlobalVariablesForAjax();
-		$this->context->smarty->assign('dpd_geopost_other_country', DpdGeopostConfiguration::OTHER_COUNTRY);
-		$this->html .= $this->context->smarty->fetch(_DPDGEOPOST_TPL_DIR_.'admin/global_variables.tpl');
+		$this->context->smarty->assign('dpd_geopost_other_country', DpdGroupConfiguration::OTHER_COUNTRY);
+		$this->html .= $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/global_variables.tpl');
 
 		if ($this->bootstrap)
 			$this->html .= $this->getBootstrapMenu();
@@ -226,9 +234,9 @@ class DpdGeopost extends CarrierModule
 		switch (Tools::getValue('menu'))
 		{
 			case 'configuration':
-				require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Configuration.controller.php');
+				require_once(_DPDGROUP_CONTROLLERS_DIR_.'Configuration.controller.php');
 
-				DpdGeopostConfigurationController::init();
+				DpdGroupConfigurationController::init();
 
 				if (!$this->bootstrap)
 				{
@@ -239,13 +247,13 @@ class DpdGeopost extends CarrierModule
 				if (!$this->ps_14)
 					$this->displayShopRestrictionWarning();
 
-				$configuration_controller = new DpdGeopostConfigurationController();
+				$configuration_controller = new DpdGroupConfigurationController();
 				$this->html .= $configuration_controller->getSettingsPage();
 				break;
 			case 'csv':
-				require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Csv.controller.php');
+				require_once(_DPDGROUP_CONTROLLERS_DIR_.'Csv.controller.php');
 
-				DpdGeopostCSVController::init();
+				DpdGroupCSVController::init();
 
 				if (!$this->bootstrap)
 				{
@@ -259,7 +267,7 @@ class DpdGeopost extends CarrierModule
 						$this->displayAdminWarning($this->l('CSV management is disabled when all shops or group of shops are selected'));
 						break;
 					}
-				$csv_controller = new DpdGeopostCSVController();
+				$csv_controller = new DpdGroupCSVController();
 				$this->html .= $csv_controller->getCSVPage();
 				break;
 			case 'help':
@@ -268,13 +276,28 @@ class DpdGeopost extends CarrierModule
 					$this->context->smarty->assign('path', array($this->displayName, $this->l('Help')));
 					$this->displayNavigation();
 				}
+
+				if (Tools::isSubmit('print_pdf'))
+				{
+					$filename = 'dpdgroup_eng.pdf';
+
+					ob_end_clean();
+					header('Content-type: application/pdf');
+					header('Content-Disposition: attachment; filename="'.$this->l('manual').'.pdf"');
+					readfile(_PS_MODULE_DIR_.$this->name.'/manual/'.$filename);
+					exit;
+				}
+
+				$this->context->smarty->assign('module_link', $this->module_url);
+				$this->html .= $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/help.tpl');
+
 				break;
 			case 'shipment_list':
 			default:
 				if ($this->ps_14)
 				{
 					includeDatepicker(null);
-					$this->addJS(_DPDGEOPOST_JS_URI_.'jquery.bpopup.min.js');
+					$this->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
 				}
 				else
 				{
@@ -284,7 +307,7 @@ class DpdGeopost extends CarrierModule
 					));
 
 					$this->context->controller->addJS(array(
-						_DPDGEOPOST_JS_URI_.'jquery.bpopup.min.js',
+						_DPDGROUP_JS_URI_.'jquery.bpopup.min.js',
 						_PS_JS_DIR_.'jquery/plugins/timepicker/jquery-ui-timepicker-addon.js' // for datetimepicker
 					));
 
@@ -297,9 +320,9 @@ class DpdGeopost extends CarrierModule
 					$this->displayNavigation();
 				}
 				else
-					$this->context->controller->addCSS(_DPDGEOPOST_CSS_URI_.'backoffice_16.css');
+					$this->context->controller->addCSS(_DPDGROUP_CSS_URI_.'backoffice_16.css');
 
-				require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'ShipmentsList.controller.php');
+				require_once(_DPDGROUP_CONTROLLERS_DIR_.'ShipmentsList.controller.php');
 
 				if (!$this->ps_14 &&
 					Configuration::getGlobalValue('PS_MULTISHOP_FEATURE_ACTIVE') &&
@@ -308,7 +331,7 @@ class DpdGeopost extends CarrierModule
 					$this->displayAdminWarning($this->l('Shipments functionality is disabled when all shops or group of shops are chosen'));
 					break;
 				}
-				$shipment_controller = new DpdGeopostShipmentController();
+				$shipment_controller = new DpdGroupShipmentController();
 				$this->html .= $shipment_controller->getShipmentList();
 				break;
 		}
@@ -318,7 +341,7 @@ class DpdGeopost extends CarrierModule
 
 	private function displayModuleWarnings()
 	{
-		$configuration = new DpdGeopostConfiguration();
+		$configuration = new DpdGroupConfiguration();
 
 		if (!$configuration->checkRequiredFields())
 		{
@@ -336,8 +359,8 @@ class DpdGeopost extends CarrierModule
 
 			if (!$this->ps_14)//on PS 1.4 html tags are encoded
 			{
-				$debug_filename = DpdGeopostWS::createDebugFileIfNotExists();
-				$warning_message .= ' <a target="_blank" href="'._DPDGEOPOST_MODULE_URI_.$debug_filename.'">'.$this->l('Debug file →').'</a>';
+				$debug_filename = DpdGroupWS::createDebugFileIfNotExists();
+				$warning_message .= ' <a target="_blank" href="'._DPDGROUP_MODULE_URI_.$debug_filename.'">'.$this->l('Debug file →').'</a>';
 			}
 
 			$this->displayAdminWarning($warning_message);
@@ -349,7 +372,7 @@ class DpdGeopost extends CarrierModule
 		if ($this->ps_14)
 		{
 			$this->context->smarty->assign('warning_message', $message);
-			$this->html .= $this->context->smarty->fetch(_DPDGEOPOST_TPL_DIR_.'admin/warning.tpl');
+			$this->html .= $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/warning.tpl');
 		}
 		else
 			$this->adminDisplayWarning($message);
@@ -428,19 +451,19 @@ class DpdGeopost extends CarrierModule
 	private function displayNavigation()
 	{
 		$this->context->smarty->assign('module_link', $this->module_url);
-		$this->html .= $this->context->smarty->fetch(_DPDGEOPOST_TPL_DIR_.'admin/navigation.tpl');
+		$this->html .= $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/navigation.tpl');
 	}
 
 	/* adds success message into session */
 	public static function addFlashMessage($msg)
 	{
-		$messages_controller = new DpdGeopostMessagesController();
+		$messages_controller = new DpdGroupMessagesController();
 		$messages_controller->setSuccessMessage($msg);
 	}
 
 	public static function addFlashError($msg)
 	{
-		$messages_controller = new DpdGeopostMessagesController();
+		$messages_controller = new DpdGroupMessagesController();
 
 		if (is_array($msg))
 		{
@@ -454,7 +477,7 @@ class DpdGeopost extends CarrierModule
 	/* displays success message only until page reload */
 	private function displayFlashMessagesIfIsset()
 	{
-		$messages_controller = new DpdGeopostMessagesController();
+		$messages_controller = new DpdGroupMessagesController();
 
 		if ($success_message = $messages_controller->getSuccessMessage())
 			$this->html .= $this->displayConfirmation($success_message);
@@ -475,34 +498,34 @@ class DpdGeopost extends CarrierModule
 
 		switch ($id_reference)
 		{
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_CLASSIC_ID):
-				return _DPDGEOPOST_CLASSIC_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_10_ID):
-				return _DPDGEOPOST_10_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_12_ID):
-				return _DPDGEOPOST_12_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_SAME_DAY_ID):
-				return _DPDGEOPOST_SAME_DAY_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_B2C_ID):
-				return _DPDGEOPOST_B2C_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_INTERNATIONAL_ID):
-				return _DPDGEOPOST_INTERNATIONAL_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_BULGARIA_ID):
-				return _DPDGEOPOST_BULGARIA_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_CLASSIC_COD_ID):
-				return _DPDGEOPOST_CLASSIC_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_10_COD_ID):
-				return _DPDGEOPOST_10_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_12_COD_ID):
-				return _DPDGEOPOST_12_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_SAME_DAY_COD_ID):
-				return _DPDGEOPOST_SAME_DAY_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_B2C_COD_ID):
-				return _DPDGEOPOST_B2C_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_INTERNATIONAL_COD_ID):
-				return _DPDGEOPOST_INTERNATIONAL_ID_;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_BULGARIA_COD_ID):
-				return _DPDGEOPOST_BULGARIA_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_CLASSIC_ID):
+				return _DPDGROUP_CLASSIC_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_10_ID):
+				return _DPDGROUP_10_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_12_ID):
+				return _DPDGROUP_12_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_SAME_DAY_ID):
+				return _DPDGROUP_SAME_DAY_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_B2C_ID):
+				return _DPDGROUP_B2C_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_INTERNATIONAL_ID):
+				return _DPDGROUP_INTERNATIONAL_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_BULGARIA_ID):
+				return _DPDGROUP_BULGARIA_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_CLASSIC_COD_ID):
+				return _DPDGROUP_CLASSIC_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_10_COD_ID):
+				return _DPDGROUP_10_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_12_COD_ID):
+				return _DPDGROUP_12_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_SAME_DAY_COD_ID):
+				return _DPDGROUP_SAME_DAY_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_B2C_COD_ID):
+				return _DPDGROUP_B2C_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_INTERNATIONAL_COD_ID):
+				return _DPDGROUP_INTERNATIONAL_ID_;
+			case Configuration::get(DpdGroupConfiguration::CARRIER_BULGARIA_COD_ID):
+				return _DPDGROUP_BULGARIA_ID_;
 			default:
 				return false;
 		}
@@ -515,19 +538,19 @@ class DpdGeopost extends CarrierModule
 
 		switch ($id_reference)
 		{
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_CLASSIC_COD_ID):
+			case Configuration::get(DpdGroupConfiguration::CARRIER_CLASSIC_COD_ID):
 				return true;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_10_COD_ID):
+			case Configuration::get(DpdGroupConfiguration::CARRIER_10_COD_ID):
 				return true;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_12_COD_ID):
+			case Configuration::get(DpdGroupConfiguration::CARRIER_12_COD_ID):
 				return true;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_SAME_DAY_COD_ID):
+			case Configuration::get(DpdGroupConfiguration::CARRIER_SAME_DAY_COD_ID):
 				return true;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_B2C_COD_ID):
+			case Configuration::get(DpdGroupConfiguration::CARRIER_B2C_COD_ID):
 				return true;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_INTERNATIONAL_COD_ID):
+			case Configuration::get(DpdGroupConfiguration::CARRIER_INTERNATIONAL_COD_ID):
 				return true;
-			case Configuration::get(DpdGeopostConfiguration::CARRIER_BULGARIA_COD_ID):
+			case Configuration::get(DpdGroupConfiguration::CARRIER_BULGARIA_COD_ID):
 				return true;
 			default:
 				return false;
@@ -537,7 +560,7 @@ class DpdGeopost extends CarrierModule
 	private static function getReferenceIdByCarrierId($id_carrier)
 	{
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
-			return DpdGeopostCarrier::getReferenceByIdCarrier($id_carrier);
+			return DpdGroupCarrier::getReferenceByIdCarrier($id_carrier);
 
 		return Db::getInstance()->getValue('
 			SELECT `id_reference`
@@ -579,18 +602,18 @@ class DpdGeopost extends CarrierModule
 		if ((Tools::getValue('controller') == 'AdminAddresses' || Tools::getValue('tab') == 'AdminAddresses') &&
 			(Tools::isSubmit('updateaddress') || Tools::isSubmit('addaddress') || Tools::isSubmit('submitAddaddress')))
 		{
-			$this->context->smarty->assign('dpdgeopost_token', sha1(_COOKIE_KEY_.$this->name));
+			$this->context->smarty->assign('dpdgroup_token', sha1(_COOKIE_KEY_.$this->name));
 
 			if (version_compare(_PS_VERSION_, '1.5', '>='))
 			{
-				$this->context->controller->addCSS(_DPDGEOPOST_CSS_URI_.'address_autocomplete.css');
-				$this->context->controller->addJS(_DPDGEOPOST_JS_URI_.'address_autocomplete.js');
-				$this->context->controller->addJS(_DPDGEOPOST_JS_URI_.'jquery-ui.min.js');
+				$this->context->controller->addCSS(_DPDGROUP_CSS_URI_.'address_autocomplete.css');
+				$this->context->controller->addJS(_DPDGROUP_JS_URI_.'address_autocomplete.js');
+				$this->context->controller->addJS(_DPDGROUP_JS_URI_.'jquery-ui.min.js');
 			}
 			else
-				$this->addCSS(_DPDGEOPOST_CSS_URI_.'address_autocomplete.css');
+				$this->addCSS(_DPDGROUP_CSS_URI_.'address_autocomplete.css');
 
-			return $this->context->smarty->fetch(_DPDGEOPOST_TPL_DIR_.'admin/address_header.tpl');
+			return $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/address_header.tpl');
 		}
 
 		return '';
@@ -598,7 +621,7 @@ class DpdGeopost extends CarrierModule
 
 	public function hookAdminOrder($params)
 	{
-		$shipment = new DpdGeopostShipment((int)$params['id_order']);
+		$shipment = new DpdGroupShipment((int)$params['id_order']);
 
 		if (Tools::isSubmit('printLabels'))
 		{
@@ -613,7 +636,7 @@ class DpdGeopost extends CarrierModule
 			}
 			else
 			{
-				$this->addFlashError(reset(DpdGeopostShipment::$errors));
+				$this->addFlashError(reset(DpdGroupShipment::$errors));
 				Tools::redirectAdmin(self::getAdminOrderLink().'&id_order='.(int)$params['id_order']);
 			}
 		}
@@ -625,11 +648,11 @@ class DpdGeopost extends CarrierModule
 		$products = $shipment->getParcelsSetUp($order->getProductsDetail());
 
 		if ($shipment->parcels)
-			DpdGeopostParcel::addParcelDataToProducts($products, $order->id);
+			DpdGroupParcel::addParcelDataToProducts($products, $order->id);
 
 		$id_method = self::getMethodIdByCarrierId($order->id_carrier);
 
-		DpdGeopostWS::$parcel_weight_warning_message = false;
+		DpdGroupWS::$parcel_weight_warning_message = false;
 		$price = $shipment->calculatePriceForOrder((int)$id_method, $order->id_address_delivery, $products);
 		$carrier = new Carrier((int)$order->id_carrier, $order->id_lang);
 		$ws_shipping_price = $price !== false ? $price : '---';
@@ -638,8 +661,8 @@ class DpdGeopost extends CarrierModule
 		$this->context->smarty->assign(array(
 			'order' => $order,
 			'module_link' => $this->getModuleLink('AdminModules'),
-			'settings' => new DpdGeopostConfiguration,
-			'total_weight' => DpdGeopostShipment::convertWeight($order->getTotalWeight()),
+			'settings' => new DpdGroupConfiguration,
+			'total_weight' => DpdGroupShipment::convertWeight($order->getTotalWeight()),
 			'shipment' => $shipment,
 			'selected_shipping_method_id' => $id_method,
 			'ws_shippingPrice' => $price !== false ? $price : '---',
@@ -650,29 +673,29 @@ class DpdGeopost extends CarrierModule
 			'errors' => $this->getErrorMessagesForOrderPage(),
 			'warnings' => $this->getWarningMessagesForOrderPage($shipment->id_shipment, $id_method,
 				$ws_shipping_price, $total_shipping),
-			'force_enable_button' => DpdGeopostWS::$parcel_weight_warning_message,
+			'force_enable_button' => DpdGroupWS::$parcel_weight_warning_message,
 			'display_product_weight_warning' => $this->orderProductsWithoutWeight($products)
 		));
 
 		if ($this->ps_14)
 		{
-			$this->addJS(_DPDGEOPOST_JS_URI_.'jquery.bpopup.min.js');
-			$this->addJS(_DPDGEOPOST_JS_URI_.'adminOrder.js');
-			$this->addCSS(_DPDGEOPOST_CSS_URI_.'adminOrder.css');
+			$this->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
+			$this->addJS(_DPDGROUP_JS_URI_.'adminOrder.js');
+			$this->addCSS(_DPDGROUP_CSS_URI_.'adminOrder.css');
 		}
 		else
 		{
-			$this->context->controller->addJS(_DPDGEOPOST_JS_URI_.'jquery.bpopup.min.js');
-			$this->context->controller->addJS(_DPDGEOPOST_JS_URI_.'adminOrder.js');
+			$this->context->controller->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
+			$this->context->controller->addJS(_DPDGROUP_JS_URI_.'adminOrder.js');
 
 			$css_filename = $this->bootstrap ? 'adminOrder_16' : 'adminOrder';
-			$this->context->controller->addCSS(_DPDGEOPOST_CSS_URI_.$css_filename.'.css');
+			$this->context->controller->addCSS(_DPDGROUP_CSS_URI_.$css_filename.'.css');
 		}
 
 		$this->setGlobalVariablesForAjax();
 		$template_filename = $this->bootstrap ? 'adminOrder_16' : 'adminOrder';
 
-		return $this->context->smarty->fetch(_DPDGEOPOST_TPL_DIR_.'hook/'.$template_filename.'.tpl');
+		return $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'hook/'.$template_filename.'.tpl');
 	}
 
 	private function orderProductsWithoutWeight($prodcuts)
@@ -696,11 +719,11 @@ class DpdGeopost extends CarrierModule
 	{
 		$errors = array();
 
-		if ($messages = DpdGeopostShipment::$errors)
+		if ($messages = DpdGroupShipment::$errors)
 			foreach ($messages as $error)
 				$errors[] = $error;
 
-		$messages_controller = new DpdGeopostMessagesController();
+		$messages_controller = new DpdGroupMessagesController();
 
 		if ($messages = $messages_controller->getErrorMessage())
 			foreach ($messages as $error)
@@ -715,7 +738,7 @@ class DpdGeopost extends CarrierModule
 	{
 		$warnings = array();
 
-		if ($messages = DpdGeopostShipment::$notices)
+		if ($messages = DpdGroupShipment::$notices)
 			foreach ($messages as $notice)
 				$warnings[] = $notice;
 
@@ -746,7 +769,7 @@ class DpdGeopost extends CarrierModule
 			return null;
 
 		$is_cod_carrier = $this->isCODCarrier((int)$this->context->cart->id_carrier);
-		$cod_payment_method = Configuration::get(DpdGeopostConfiguration::COD_MODULE);
+		$cod_payment_method = Configuration::get(DpdGroupConfiguration::COD_MODULE);
 
 		$cache_id = 'exceptionsCache';
 		$exceptions_cache = (Cache::isStored($cache_id)) ? Cache::retrieve($cache_id) : array(); // existing cache
@@ -777,7 +800,7 @@ class DpdGeopost extends CarrierModule
 	private function disablePaymentMethods()
 	{
 		$is_cod_carrier = $this->isCODCarrier((int)$this->context->cart->id_carrier);
-		$cod_payment_method = Configuration::get(DpdGeopostConfiguration::COD_MODULE);
+		$cod_payment_method = Configuration::get(DpdGroupConfiguration::COD_MODULE);
 
 		if ($payment_modules = self::getPaymentModules())
 		{
@@ -799,18 +822,18 @@ class DpdGeopost extends CarrierModule
 
 	public function hookUpdateCarrier($params)
 	{
-		$id_reference = (int)DpdGeopostCarrier::getReferenceByIdCarrier((int)$params['id_carrier']);
+		$id_reference = (int)DpdGroupCarrier::getReferenceByIdCarrier((int)$params['id_carrier']);
 		$id_carrier = (int)$params['carrier']->id;
 
-		$dpdgeopost_carrier = new DpdGeopostCarrier();
-		$dpdgeopost_carrier->id_carrier = (int)$id_carrier;
-		$dpdgeopost_carrier->id_reference = (int)$id_reference;
-		$dpdgeopost_carrier->save();
+		$dpdgroup_carrier = new DpdGroupCarrier();
+		$dpdgroup_carrier->id_carrier = (int)$id_carrier;
+		$dpdgroup_carrier->id_reference = (int)$id_reference;
+		$dpdgroup_carrier->save();
 	}
 
 	public function getOrderShippingCost($cart, $shipping_cost)
 	{
-		return $this->getOrderShippingCostExternal($cart);
+		return $this->getOrderShippingCostExternal($cart, array(), $shipping_cost);
 	}
 
 	public function getPackageShippingCost($cart, $shipping_cost, $products)
@@ -853,7 +876,7 @@ class DpdGeopost extends CarrierModule
 		if (!Validate::isLoadedObject($carrier))
 			return false;
 
-		$configuration = new DpdGeopostConfiguration();
+		$configuration = new DpdGroupConfiguration();
 		$is_cod_method = $this->isCODCarrier((int)$this->id_carrier);
 
 		if ($is_cod_method && !$this->isCODCarrierAvailable($cart, $configuration, (int)$id_customer_country))
@@ -866,9 +889,9 @@ class DpdGeopost extends CarrierModule
 		$order_total_price = empty($products) ? $cart->getOrderTotal(false, Cart::BOTH_WITHOUT_SHIPPING) :
 			$cart->getOrderTotal(true, Cart::BOTH_WITHOUT_SHIPPING, $products, $this->id_carrier);
 		$total_weight = empty($products) ? $cart->getTotalWeight() : $cart->getTotalWeight($products);
-		$cart_total = $carrier_shipping_method == Carrier::SHIPPING_METHOD_WEIGHT ? DpdGeopostShipment::convertWeight($total_weight) :
+		$cart_total = $carrier_shipping_method == Carrier::SHIPPING_METHOD_WEIGHT ? DpdGroupShipment::convertWeight($total_weight) :
 			$order_total_price;
-		$price_rule = DpdGeopostShipment::getPriceRule($cart_total, $id_method, $id_address_delivery, $is_cod_method);
+		$price_rule = DpdGroupShipment::getPriceRule($cart_total, $id_method, $id_address_delivery, $is_cod_method);
 		$additional_shipping_cost = $this->calculateAdditionalShippingCost($cart, $products);
 		$additional_shipping_cost = Tools::convertPrice($additional_shipping_cost);
 		$handling_charges = $carrier->shipping_handling ? Configuration::get('PS_SHIPPING_HANDLING') : 0;
@@ -877,15 +900,15 @@ class DpdGeopost extends CarrierModule
 
 		switch ($configuration->price_calculation_method)
 		{
-			case DpdGeopostConfiguration::PRICE_CALCULATION_PRESTASHOP:
+			case DpdGroupConfiguration::PRICE_CALCULATION_PRESTASHOP:
 				$price = $this->getPriceByPrestaShopCalculationType($carrier_shipping_method, $carrier, $total_weight, $zone, $additional_shipping_cost,
 					$handling_charges, $is_cod_method, $order_total_price, $configuration, $price_rule);
 				break;
-			case DpdGeopostConfiguration::PRICE_CALCULATION_WEB_SERVICES:
+			case DpdGroupConfiguration::PRICE_CALCULATION_WEB_SERVICES:
 				$price = $this->getPriceByWebServicesCalculationType($cart, $is_cod_method, $order_total_price, $id_method, $id_address_delivery,
 					$additional_shipping_cost, $handling_charges, $configuration, $price_rule, $products);
 				break;
-			case DpdGeopostConfiguration::PRICE_CALCULATION_CSV:
+			case DpdGroupConfiguration::PRICE_CALCULATION_CSV:
 				$price = $this->getPriceByCSVCalculationType($price_rule, $order_total_price, $additional_shipping_cost, $handling_charges,
 					$is_cod_method, $configuration);
 				break;
@@ -896,7 +919,7 @@ class DpdGeopost extends CarrierModule
 	}
 
 	private function getPriceByPrestaShopCalculationType($carrier_shipping_method, Carrier $carrier, $cart_total, $zone, $additional_shipping_cost,
-		$handling_charges, $is_cod_method, $order_total_price, DpdGeopostConfiguration $configuration, $price_rule)
+		$handling_charges, $is_cod_method, $order_total_price, DpdGroupConfiguration $configuration, $price_rule)
 	{
 		if ($carrier_shipping_method == Carrier::SHIPPING_METHOD_WEIGHT)
 			$carrier_price = $carrier->getDeliveryPriceByWeight($cart_total, $zone);
@@ -914,7 +937,7 @@ class DpdGeopost extends CarrierModule
 				$cod_price = $this->convertPriceByCurrency($price_rule['cod_surcharge'], $price_rule['currency']);
 			elseif ($price_rule['cod_surcharge_percentage'] !== '')
 			{
-				$percentage_starting_price = $configuration->cod_percentage_calculation == DpdGeopostConfiguration::COD_PERCENTAGE_CALCULATION_CART ?
+				$percentage_starting_price = $configuration->cod_percentage_calculation == DpdGroupConfiguration::COD_PERCENTAGE_CALCULATION_CART ?
 					$order_total_price : $order_total_price + $shipping_price_with_charges;
 				$cod_price = $this->calculateCODSurchargePercentage($percentage_starting_price, $price_rule['cod_surcharge_percentage'],
 					$price_rule['cod_min_surcharge'], $price_rule['currency']);
@@ -925,9 +948,9 @@ class DpdGeopost extends CarrierModule
 	}
 
 	private function getPriceByWebServicesCalculationType(Cart $cart, $is_cod_method, $order_total_price, $id_method, $id_address_delivery,
-		$additional_shipping_cost, $handling_charges, DpdGeopostConfiguration $configuration, $price_rule, $products)
+		$additional_shipping_cost, $handling_charges, DpdGroupConfiguration $configuration, $price_rule, $products)
 	{
-		$shipment = new DpdGeopostShipment;
+		$shipment = new DpdGroupShipment;
 		$cart_products = empty($products) ? $cart->getProducts() : $products;
 
 		if (!self::$parcels)
@@ -976,7 +999,7 @@ class DpdGeopost extends CarrierModule
 			elseif ($is_cod_method && $price_rule['cod_surcharge_percentage'] !== '')
 			{
 				$percentage_starting_price = $configuration->cod_percentage_calculation ==
-				DpdGeopostConfiguration::COD_PERCENTAGE_CALCULATION_CART ? $order_total_price : $order_total_price + $result['price'];
+				DpdGroupConfiguration::COD_PERCENTAGE_CALCULATION_CART ? $order_total_price : $order_total_price + $result['price'];
 				$result['price'] += $this->calculateCODSurchargePercentage($percentage_starting_price, $price_rule['cod_surcharge_percentage'],
 					$price_rule['cod_min_surcharge'], $price_rule['currency']);
 			}
@@ -1008,7 +1031,7 @@ class DpdGeopost extends CarrierModule
 			elseif ($price_rule['cod_surcharge_percentage'] !== '')
 			{
 				$percentage_starting_price = $configuration->cod_percentage_calculation ==
-				DpdGeopostConfiguration::COD_PERCENTAGE_CALCULATION_CART ? $order_total_price : $order_total_price + $shipping_price_with_charges;
+				DpdGroupConfiguration::COD_PERCENTAGE_CALCULATION_CART ? $order_total_price : $order_total_price + $shipping_price_with_charges;
 				$cod_price = $this->calculateCODSurchargePercentage($percentage_starting_price, $price_rule['cod_surcharge_percentage'],
 					$price_rule['cod_min_surcharge'], $price_rule['currency']);
 			}
@@ -1022,13 +1045,13 @@ class DpdGeopost extends CarrierModule
 	 * depending on customer delivery address country and selected currency
 	 *
 	 * @param Cart $cart
-	 * @param DpdGeopostConfiguration $configuration
+	 * @param DpdGroupConfiguration $configuration
 	 * @param $id_customer_country
 	 * @return bool
 	 */
-	private function isCODCarrierAvailable(Cart $cart, DpdGeopostConfiguration $configuration, $id_customer_country)
+	private function isCODCarrierAvailable(Cart $cart, DpdGroupConfiguration $configuration, $id_customer_country)
 	{
-		if ($configuration->dpd_country_select == DpdGeopostConfiguration::OTHER_COUNTRY)
+		if ($configuration->dpd_country_select == DpdGroupConfiguration::OTHER_COUNTRY)
 			return true;
 
 		$customer_country_iso_code = Country::getIsoById((int)$id_customer_country);
@@ -1036,9 +1059,9 @@ class DpdGeopost extends CarrierModule
 		if ($configuration->dpd_country_select != $customer_country_iso_code)
 			return false;
 
-		require_once(_DPDGEOPOST_CONTROLLERS_DIR_.'Configuration.controller.php');
+		require_once(_DPDGROUP_CONTROLLERS_DIR_.'Configuration.controller.php');
 
-		$configuration_controller = new DpdGeopostConfigurationController();
+		$configuration_controller = new DpdGroupConfigurationController();
 		$configuration_controller->setAvailableCountries();
 		$sender_currency = '';
 

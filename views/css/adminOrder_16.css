@@ -1,19 +1,19 @@
-#dpdgeopost_preview_shipment, #dpdgeopost_edit_shipment, #dpdgeopost_delete_shipment
+#dpdgroup_preview_shipment, #dpdgroup_edit_shipment, #dpdgroup_delete_shipment
 {
 	margin-left: 1%;
 }
 
-#dpdgeopost_shipment_creation
+#dpdgroup_shipment_creation
 {
 	display:none;
 }
 
-#dpdgeopost_shipment_creation .panel
+#dpdgroup_shipment_creation .panel
 {
 	padding: 20px;
 }
 
-#dpdgeopost_shipment_creation .panel .panel-heading
+#dpdgroup_shipment_creation .panel .panel-heading
 {
 	margin: -20px -16px 15px;
 	padding: 0 0 0 5px;
@@ -24,12 +24,12 @@
 	font-weight: 400;
 }
 
-#dpdgeopost_shipment_creation .panel .panel-footer
+#dpdgroup_shipment_creation .panel .panel-footer
 {
 	height: auto;
 }
 
-#dpdgeopost_shipment_creation .table-container
+#dpdgroup_shipment_creation .table-container
 {
 	border: 1px solid #ddd;
 	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1), 0 0 0 3px #fff inset;

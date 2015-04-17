@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostCarrier extends DpdGeopostObjectModel
+class DpdGroupCarrier extends DpdGroupObjectModel
 {
 	public $id_dpd_geopost_carrier;
 
@@ -34,7 +34,7 @@ class DpdGeopostCarrier extends DpdGeopostObjectModel
 	public $date_upd;
 
 	public static $definition = array(
-		'table' => _DPDGEOPOST_CARRIER_DB_,
+		'table' => _DPDGROUP_CARRIER_DB_,
 		'primary' => 'id_dpd_geopost_carrier',
 		'multilang_shop' => true,
 		'multishop' => true,
@@ -51,7 +51,7 @@ class DpdGeopostCarrier extends DpdGeopostObjectModel
 	{
 		return DB::getInstance()->getValue('
 			SELECT `id_reference`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_CARRIER_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_CARRIER_DB_.'`
 			WHERE `id_carrier` = "'.(int)$id_carrier.'"
 		');
 	}
@@ -60,7 +60,7 @@ class DpdGeopostCarrier extends DpdGeopostObjectModel
 	{
 		return DB::getInstance()->getValue('
 			SELECT MAX(`id_carrier`)
-			FROM `'._DB_PREFIX_._DPDGEOPOST_CARRIER_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_CARRIER_DB_.'`
 			WHERE `id_reference` = "'.(int)$id_reference.'"
 		');
 	}

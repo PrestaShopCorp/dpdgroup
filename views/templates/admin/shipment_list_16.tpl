@@ -17,8 +17,8 @@
 *  International Registered Trademark & Property of DPD Polska sp. z o.o.
 *}
 <script type="text/javascript">
-	var dpdgeopost_error_no_shipment_selected = '{l s='Select at least one shipment' mod='dpdgeopost' js=1}';
-	var dpdgeopost_error_puckup_not_available = '{l s='To arrange pickup, manifest or label must be printed' mod='dpdgeopost' js=1}';
+	var dpdgroup_error_no_shipment_selected = '{l s='Select at least one shipment' mod='dpdgroup' js=1}';
+	var dpdgroup_error_puckup_not_available = '{l s='To arrange pickup, manifest or label must be printed' mod='dpdgroup' js=1}';
 	var dpd_geopost_id_lang = '{$dpd_geopost_id_lang|escape:'htmlall':'UTF-8'}';
 	var ps14 = 0;
 
@@ -50,21 +50,21 @@
 			});
 		}
 
-		$("#dpdgeopost_pickup_datetime").datepicker({
+		$("#dpdgroup_pickup_datetime").datepicker({
 			dateFormat:"yy-mm-dd"
 		});
 
-		$('#dpdgeopost_pickup_fromtime, #dpdgeopost_pickup_totime').datetimepicker({
-			currentText: '{l s='Now' mod='dpdgeopost'}',
-			closeText: '{l s='Done' mod='dpdgeopost'}',
+		$('#dpdgroup_pickup_fromtime, #dpdgroup_pickup_totime').datetimepicker({
+			currentText: '{l s='Now' mod='dpdgroup'}',
+			closeText: '{l s='Done' mod='dpdgroup'}',
 			timeOnly: true,
 			ampm: false,
 			timeFormat: 'hh:mm:ss',
 			timeSuffix: '',
-			timeOnlyTitle: '{l s='Choose Time' mod='dpdgeopost'}',
-			timeText: '{l s='Time' mod='dpdgeopost'}',
-			hourText: '{l s='Hour' mod='dpdgeopost'}',
-			minuteText: '{l s='Minute' mod='dpdgeopost'}'
+			timeOnlyTitle: '{l s='Choose Time' mod='dpdgroup'}',
+			timeText: '{l s='Time' mod='dpdgroup'}',
+			hourText: '{l s='Hour' mod='dpdgroup'}',
+			minuteText: '{l s='Minute' mod='dpdgroup'}'
 		});
 	});
 </script>
@@ -73,43 +73,43 @@
 	@media (max-width: 992px) {
 		.table-responsive-row td:nth-of-type(2):before
 		{
-			content: "{l s='Shipment ID' mod='dpdgeopost'}";
+			content: "{l s='Shipment ID' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(3):before
 		{
-			content: "{l s='Date shipped' mod='dpdgeopost'}";
+			content: "{l s='Date shipped' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(4):before
 		{
-			content: "{l s='Order' mod='dpdgeopost'}";
+			content: "{l s='Order' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(5):before
 		{
-			content: "{l s='Order Date' mod='dpdgeopost'}";
+			content: "{l s='Order Date' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(6):before
 		{
-			content: "{l s='Carrier' mod='dpdgeopost'}";
+			content: "{l s='Carrier' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(7):before
 		{
-			content: "{l s='Customer' mod='dpdgeopost'}";
+			content: "{l s='Customer' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(8):before
 		{
-			content: "{l s='Total Qty' mod='dpdgeopost'}";
+			content: "{l s='Total Qty' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(9):before
 		{
-			content: "{l s='Manifest Closed' mod='dpdgeopost'}";
+			content: "{l s='Manifest Closed' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(10):before
 		{
-			content: "{l s='Label Printed' mod='dpdgeopost'}";
+			content: "{l s='Label Printed' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(11):before
 		{
-			content: "{l s='DPD pickup' mod='dpdgeopost'}";
+			content: "{l s='DPD pickup' mod='dpdgroup'}";
 		}
 	}
 </style>
@@ -118,7 +118,7 @@
 	<input type="hidden" value="0" name="submitFilterShipments" id="submitFilterShipments" />
 	<div class="panel col-lg-12">
 		<div class="panel-heading">
-			{l s='Shipments' mod='dpdgeopost'}
+			{l s='Shipments' mod='dpdgroup'}
 			<span class="badge">{$list_total|escape:'htmlall':'UTF-8'}</span>
 		</div>
 		<div class="table-responsive-row clearfix">
@@ -130,7 +130,7 @@
 						</th>
 						<th class="fixed-width-xs center">
 							<span class="title_box{if $order_by == 'id_shipment'} active{/if}">
-								{l s='Shipment ID' mod='dpdgeopost'}
+								{l s='Shipment ID' mod='dpdgroup'}
 								<a{if $order_by == 'id_shipment' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=id_shipment&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -141,7 +141,7 @@
 						</th>
 						<th>
 							<span class="title_box{if $order_by == 'date_shipped'} active{/if}">
-								{l s='Date shipped' mod='dpdgeopost'}
+								{l s='Date shipped' mod='dpdgroup'}
 								<a{if $order_by == 'date_shipped' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=date_shipped&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -152,7 +152,7 @@
 						</th>
 						<th>
 							<span class="title_box{if $order_by == 'id_order'} active{/if}">
-								{l s='Order' mod='dpdgeopost'}
+								{l s='Order' mod='dpdgroup'}
 								<a{if $order_by == 'id_order' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=id_order&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -163,7 +163,7 @@
 						</th>
 						<th>
 							<span class="title_box{if $order_by == 'date_add'} active{/if}">
-								{l s='Order Date' mod='dpdgeopost'}
+								{l s='Order Date' mod='dpdgroup'}
 								<a{if $order_by == 'date_add' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=date_add&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -174,7 +174,7 @@
 						</th>
 						<th>
 							<span class="title_box{if $order_by == 'carrier'} active{/if}">
-								{l s='Carrier' mod='dpdgeopost'}
+								{l s='Carrier' mod='dpdgroup'}
 								<a{if $order_by == 'carrier' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=carrier&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -185,7 +185,7 @@
 						</th>
 						<th>
 							<span class="title_box{if $order_by == 'customer'} active{/if}">
-								{l s='Customer' mod='dpdgeopost'}
+								{l s='Customer' mod='dpdgroup'}
 								<a{if $order_by == 'customer' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=customer&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -196,7 +196,7 @@
 						</th>
 						<th>
 							<span class="title_box{if $order_by == 'quantity'} active{/if}">
-								{l s='Total Qty' mod='dpdgeopost'}
+								{l s='Total Qty' mod='dpdgroup'}
 								<a{if $order_by == 'quantity' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=quantity&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -207,17 +207,17 @@
 						</th>
 						<th>
 							<span class="title_box">
-								{l s='Manifest Closed' mod='dpdgeopost'}
+								{l s='Manifest Closed' mod='dpdgroup'}
 							</span>
 						</th>
 						<th>
 							<span class="title_box">
-								{l s='Label Printed' mod='dpdgeopost'}
+								{l s='Label Printed' mod='dpdgroup'}
 							</span>
 						</th>
 						<th>
 							<span class="title_box{if $order_by == 'date_pickup'} active{/if}">
-								{l s='DPD pickup' mod='dpdgeopost'}
+								{l s='DPD pickup' mod='dpdgroup'}
 								<a{if $order_by == 'date_pickup' && $order_way == 'desc'} class="active"{/if} href="{$full_url|escape:'htmlall':'UTF-8'}&ShipmentOrderBy=date_pickup&ShipmentOrderWay=desc">
 									<i class="icon-caret-down"></i>
 								</a>
@@ -240,7 +240,7 @@
 						<th class="text-right">
 							<div class="date_range row">
 								<div class="input-group fixed-width-md">
-									<input type="text" placeholder="{l s='From' mod='dpdgeopost'}"
+									<input type="text" placeholder="{l s='From' mod='dpdgroup'}"
 									       name="local_ShipmentsFilter_date_shipped_0"
 									       id="local_ShipmentsFilter_date_shipped_0"
 									       class="filter datepicker date-input form-control"
@@ -251,7 +251,7 @@
 									</span>
 								</div>
 								<div class="input-group fixed-width-md">
-									<input type="text" placeholder="{l s='To' mod='dpdgeopost'}" name="local_ShipmentsFilter_date_shipped_1" id="local_ShipmentsFilter_date_shipped_1" class="filter datepicker date-input form-control"
+									<input type="text" placeholder="{l s='To' mod='dpdgroup'}" name="local_ShipmentsFilter_date_shipped_1" id="local_ShipmentsFilter_date_shipped_1" class="filter datepicker date-input form-control"
 									       value="{if Context::getContext()->cookie->ShipmentsFilter_date_shipped !== false}{Context::getContext()->cookie->local_ShipmentsFilter_date_shipped_1|escape:'htmlall':'UTF-8'}{/if}" />
 									<input type="hidden" value="" name="ShipmentsFilter_date_shipped[1]" id="ShipmentsFilter_date_shipped_1">
 									<span class="input-group-addon">
@@ -280,7 +280,7 @@
 						<th class="text-right">
 							<div class="date_range row">
 								<div class="input-group fixed-width-md">
-									<input type="text" placeholder="{l s='From' mod='dpdgeopost'}" name="local_ShipmentsFilter_date_add_0" id="local_ShipmentsFilter_date_add_0" class="filter datepicker date-input form-control"
+									<input type="text" placeholder="{l s='From' mod='dpdgroup'}" name="local_ShipmentsFilter_date_add_0" id="local_ShipmentsFilter_date_add_0" class="filter datepicker date-input form-control"
 									       value="{if Context::getContext()->cookie->ShipmentsFilter_date_add !== false}{Context::getContext()->cookie->local_ShipmentsFilter_date_add_0|escape:'htmlall':'UTF-8'}{/if}" />
 									<input type="hidden" value="" name="ShipmentsFilter_date_add[0]" id="ShipmentsFilter_date_add_0">
 									<span class="input-group-addon">
@@ -288,7 +288,7 @@
 									</span>
 								</div>
 								<div class="input-group fixed-width-md">
-									<input type="text" placeholder="{l s='To' mod='dpdgeopost'}" name="local_ShipmentsFilter_date_add_1" id="local_ShipmentsFilter_date_add_1" class="filter datepicker date-input form-control"
+									<input type="text" placeholder="{l s='To' mod='dpdgroup'}" name="local_ShipmentsFilter_date_add_1" id="local_ShipmentsFilter_date_add_1" class="filter datepicker date-input form-control"
 									       value="{if Context::getContext()->cookie->ShipmentsFilter_date_add !== false}{Context::getContext()->cookie->local_ShipmentsFilter_date_add_1|escape:'htmlall':'UTF-8'}{/if}" />
 									<input type="hidden" value="" name="ShipmentsFilter_date_add[1]" id="ShipmentsFilter_date_add_1">
 									<span class="input-group-addon">
@@ -323,21 +323,21 @@
 						<th class="text-center">
 							<select class="filter fixed-width-sm" name="ShipmentsFilter_manifest" onchange="$('input#submitFilterButtonShipments').click();">
 								<option value="">-</option>
-								<option {if Context::getContext()->cookie->ShipmentsFilter_manifest === '1'}selected="selected" {/if}value="1">{l s='Yes' mod='dpdgeopost'}</option>
-								<option {if Context::getContext()->cookie->ShipmentsFilter_manifest === '0'}selected="selected" {/if}value="0">{l s='No' mod='dpdgeopost'}</option>
+								<option {if Context::getContext()->cookie->ShipmentsFilter_manifest === '1'}selected="selected" {/if}value="1">{l s='Yes' mod='dpdgroup'}</option>
+								<option {if Context::getContext()->cookie->ShipmentsFilter_manifest === '0'}selected="selected" {/if}value="0">{l s='No' mod='dpdgroup'}</option>
 							</select>
 						</th>
 						<th class="text-center">
 							<select class="filter fixed-width-sm" name="ShipmentsFilter_label" onchange="$('input#submitFilterButtonShipments').click();">
 								<option value="">-</option>
-								<option {if Context::getContext()->cookie->ShipmentsFilter_label === '1'}selected="selected" {/if}value="1">{l s='Yes' mod='dpdgeopost'}</option>
-								<option {if Context::getContext()->cookie->ShipmentsFilter_label === '0'}selected="selected" {/if}value="0">{l s='No' mod='dpdgeopost'}</option>
+								<option {if Context::getContext()->cookie->ShipmentsFilter_label === '1'}selected="selected" {/if}value="1">{l s='Yes' mod='dpdgroup'}</option>
+								<option {if Context::getContext()->cookie->ShipmentsFilter_label === '0'}selected="selected" {/if}value="0">{l s='No' mod='dpdgroup'}</option>
 							</select>
 						</th>
 						<th class="text-right">
 							<div class="date_range row">
 								<div class="input-group fixed-width-md">
-									<input type="text" placeholder="{l s='From' mod='dpdgeopost'}" name="local_ShipmentsFilter_date_pickup_0" id="local_ShipmentsFilter_date_pickup_0" class="filter datepicker date-input form-control"
+									<input type="text" placeholder="{l s='From' mod='dpdgroup'}" name="local_ShipmentsFilter_date_pickup_0" id="local_ShipmentsFilter_date_pickup_0" class="filter datepicker date-input form-control"
 									       value="{if Context::getContext()->cookie->ShipmentsFilter_date_pickup !== false}{Context::getContext()->cookie->local_ShipmentsFilter_date_pickup_0|escape:'htmlall':'UTF-8'}{/if}" />
 									<input type="hidden" value="" name="ShipmentsFilter_date_pickup[0]" id="ShipmentsFilter_date_pickup_0">
 									<span class="input-group-addon">
@@ -345,7 +345,7 @@
 									</span>
 								</div>
 								<div class="input-group fixed-width-md">
-									<input type="text" placeholder="{l s='To' mod='dpdgeopost'}" name="local_ShipmentsFilter_date_pickup_1" id="local_ShipmentsFilter_date_pickup_1" class="filter datepicker date-input form-control"
+									<input type="text" placeholder="{l s='To' mod='dpdgroup'}" name="local_ShipmentsFilter_date_pickup_1" id="local_ShipmentsFilter_date_pickup_1" class="filter datepicker date-input form-control"
 									       value="{if Context::getContext()->cookie->ShipmentsFilter_date_pickup !== false}{Context::getContext()->cookie->local_ShipmentsFilter_date_pickup_1|escape:'htmlall':'UTF-8'}{/if}" />
 									<input type="hidden" value="" name="ShipmentsFilter_date_pickup[1]" id="ShipmentsFilter_date_pickup_1">
 									<span class="input-group-addon">
@@ -372,7 +372,7 @@
 							<span class="pull-right">
 								<button id="submitFilterButtonShipments" class="btn btn-default" data-list-id="Shipments" name="submitFilterButtonShipments" type="submit">
 									<i class="icon-search"></i>
-									{l s='Search' mod='dpdgeopost'}
+									{l s='Search' mod='dpdgroup'}
 								</button>
 								{if Context::getContext()->cookie->ShipmentsFilter_id_shipment !== false ||
 									Context::getContext()->cookie->ShipmentsFilter_date_shipped !== false ||
@@ -386,7 +386,7 @@
 									Context::getContext()->cookie->ShipmentsFilter_date_pickup !== false}
 									<button type="submit" name="submitResetShipments" class="btn btn-warning">
 										<i class="icon-eraser"></i>
-										{l s='Reset' mod='dpdgeopost'}
+										{l s='Reset' mod='dpdgroup'}
 									</button>
 								{/if}
 							</span>
@@ -451,22 +451,22 @@
 								</td>
 								<td class="center">
 									{if $shipments[ii].manifest && $shipments[ii].manifest != '0000-00-00 00:00:00'}
-										<a class="list-action-enable action-enabled" title="{l s='Yes' mod='dpdgeopost'}">
+										<a class="list-action-enable action-enabled" title="{l s='Yes' mod='dpdgroup'}">
 											<i class="icon-check"></i>
 										</a>
 									{else}
-										<a class="list-action-enable action-disabled" title="{l s='No' mod='dpdgeopost'}">
+										<a class="list-action-enable action-disabled" title="{l s='No' mod='dpdgroup'}">
 											<i class="icon-remove"></i>
 										</a>
 									{/if}
 								</td>
 								<td class="center">
 									{if $shipments[ii].label}
-										<a class="list-action-enable action-enabled" title="{l s='Yes' mod='dpdgeopost'}">
+										<a class="list-action-enable action-enabled" title="{l s='Yes' mod='dpdgroup'}">
 											<i class="icon-check"></i>
 										</a>
 									{else}
-										<a class="list-action-enable action-disabled" title="{l s='No' mod='dpdgeopost'}">
+										<a class="list-action-enable action-disabled" title="{l s='No' mod='dpdgroup'}">
 											<i class="icon-remove"></i>
 										</a>
 									{/if}
@@ -481,9 +481,9 @@
 								<td class="text-right">
 									<div class="btn-group-action">
 										<div class="btn-group pull-right">
-											<a class="edit btn btn-default" title="{l s='View' mod='dpdgeopost'}" href="{$order_link|escape:'htmlall':'UTF-8'}&id_order={$shipments[ii].id_order|escape:'htmlall':'UTF-8'}#dpdgeopost_fieldset_identifier">
+											<a class="edit btn btn-default" title="{l s='View' mod='dpdgroup'}" href="{$order_link|escape:'htmlall':'UTF-8'}&id_order={$shipments[ii].id_order|escape:'htmlall':'UTF-8'}#dpdgroup_fieldset_identifier">
 												<i class="icon-preview"></i>
-												{l s='View' mod='dpdgeopost'}
+												{l s='View' mod='dpdgroup'}
 											</a>
 											{if $shipments[ii].shipping_number && isset($shipments[ii].carrier_url)}
 												<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -491,9 +491,9 @@
 												</button>
 												<ul class="dropdown-menu">
 													<li>
-														<a target="_blank" title="{l s='Track Shipment' mod='dpdgeopost'}" href="{$shipments[ii].carrier_url|replace:'@':$shipments[ii].shipping_number}">
+														<a target="_blank" title="{l s='Track Shipment' mod='dpdgroup'}" href="{$shipments[ii].carrier_url|replace:'@':$shipments[ii].shipping_number}">
 															<i class="icon-truck"></i>
-															{l s='Track Shipment' mod='dpdgeopost'}
+															{l s='Track Shipment' mod='dpdgroup'}
 														</a>
 													</li>
 												</ul>
@@ -506,7 +506,7 @@
 					{else}
 						<tr>
 							<td colspan="12" class="center">
-								{l s='No shipments' mod='dpdgeopost'}
+								{l s='No shipments' mod='dpdgroup'}
 							</td>
 						</tr>
 					{/if}
@@ -518,45 +518,45 @@
 				<div class="col-lg-6">
 					<div class="btn-group bulk-actions dropup">
 						<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
-							{l s='Bulk actions' mod='dpdgeopost'}
+							{l s='Bulk actions' mod='dpdgroup'}
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu">
 							<li>
 								<a onclick="javascript:checkDelBoxes($(this).closest('form').get(0), 'ShipmentsBox[]', true);return false;" href="#">
 									<i class="icon-check-sign"></i>
-									{l s='Select all' mod='dpdgeopost'}
+									{l s='Select all' mod='dpdgroup'}
 								</a>
 							</li>
 							<li>
 								<a onclick="javascript:checkDelBoxes($(this).closest('form').get(0), 'ShipmentsBox[]', false);return false;" href="#">
 									<i class="icon-check-empty"></i>
-									{l s='Unselect all' mod='dpdgeopost'}
+									{l s='Unselect all' mod='dpdgroup'}
 								</a>
 							</li>
 							<li class="divider"></li>
 							<li>
 								<a onclick="sendBulkAction($(this).closest('form').get(0), 'printManifest');" href="#">
 									<i class="icon-print"></i>
-									{l s='Print manifest(s)' mod='dpdgeopost'}
+									{l s='Print manifest(s)' mod='dpdgroup'}
 								</a>
 							</li>
 							<li>
 								<a onclick="sendBulkAction($(this).closest('form').get(0), 'printLabels');" href="#">
 									<i class="icon-print"></i>
-									{l s='Print label(s)' mod='dpdgeopost'}
+									{l s='Print label(s)' mod='dpdgroup'}
 								</a>
 							</li>
 							<li>
 								<a onclick="sendBulkAction($(this).closest('form').get(0), 'changeOrderStatus');" href="#">
 									<i class="icon-truck"></i>
-									{l s='Change order status to shipped' mod='dpdgeopost'}
+									{l s='Change order status to shipped' mod='dpdgroup'}
 								</a>
 							</li>
 							<li>
 								<a id="displayPickupDialog" href="#">
 									<i class="icon-credit-card"></i>
-									{l s='Arrange DPD pickup' mod='dpdgeopost'}
+									{l s='Arrange DPD pickup' mod='dpdgroup'}
 								</a>
 							</li>
 						</ul>
@@ -567,7 +567,7 @@
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="pagination">
-							{l s='Display' mod='dpdgeopost'}
+							{l s='Display' mod='dpdgroup'}
 							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
 								{$selected_pagination|intval}
 								<i class="icon-caret-down"></i>
@@ -579,7 +579,7 @@
 									</li>
 								{/section}
 							</ul>
-							/ {$list_total|escape:'htmlall':'UTF-8'} {l s='result(s)' mod='dpdgeopost'}
+							/ {$list_total|escape:'htmlall':'UTF-8'} {l s='result(s)' mod='dpdgroup'}
 							<input id="csv-pagination-items-page" type="hidden" value="{$selected_pagination|intval}" name="pagination" />
 						</div>
 						<ul class="pagination pull-right">
@@ -642,25 +642,25 @@
 	});
 </script>
 
-<div id="dpdgeopost_pickup_dialog">
+<div id="dpdgroup_pickup_dialog">
 
 	<div class="bootstrap">
 		<div class="panel">
 			<div class="panel-heading">
 				<i class="icon-plus-circle"></i>
-				{l s='Arrange DPD Geopost pickup' mod='dpdgeopost'}
+				{l s='Arrange DPD Group pickup' mod='dpdgroup'}
 			</div>
 
 			<div class="form-wrapper">
-				<div id="dpdgeopost_pickup_dialog_mssg"></div>
+				<div id="dpdgroup_pickup_dialog_mssg"></div>
 				<div class="clearfix"></div>
 
 				<div class="form-group">
-					<label for="dpdgeopost_pickup_datetime" class="control-label col-lg-12 required ps16">
-						{l s='Pickup date' mod='dpdgeopost'}
+					<label for="dpdgroup_pickup_datetime" class="control-label col-lg-12 required ps16">
+						{l s='Pickup date' mod='dpdgroup'}
 					</label>
 					<div class="col-lg-12">
-						<input type="text" id="dpdgeopost_pickup_datetime" name="dpdgeopost_pickup_data[date]" />
+						<input type="text" id="dpdgroup_pickup_datetime" name="dpdgroup_pickup_data[date]" />
 					</div>
 					<div class="col-lg-9">
 						<div class="help-block">
@@ -671,11 +671,11 @@
 
 
 				<div class="form-group">
-					<label for="dpdgeopost_pickup_fromtime" class="control-label col-lg-12 required ps16">
-						{l s='Pickup start time' mod='dpdgeopost'}
+					<label for="dpdgroup_pickup_fromtime" class="control-label col-lg-12 required ps16">
+						{l s='Pickup start time' mod='dpdgroup'}
 					</label>
 					<div class="col-lg-12">
-						<input type="text" id="dpdgeopost_pickup_fromtime" name="dpdgeopost_pickup_data[from_time]" />
+						<input type="text" id="dpdgroup_pickup_fromtime" name="dpdgroup_pickup_data[from_time]" />
 					</div>
 					<div class="col-lg-9">
 						<div class="help-block">
@@ -685,11 +685,11 @@
 				</div>
 
 				<div class="form-group">
-					<label for="dpdgeopost_pickup_totime" class="control-label col-lg-12 required ps16">
-						{l s='Pickup end time' mod='dpdgeopost'}
+					<label for="dpdgroup_pickup_totime" class="control-label col-lg-12 required ps16">
+						{l s='Pickup end time' mod='dpdgroup'}
 					</label>
 					<div class="col-lg-12">
-						<input type="text" id="dpdgeopost_pickup_totime" name="dpdgeopost_pickup_data[to_time]" />
+						<input type="text" id="dpdgroup_pickup_totime" name="dpdgroup_pickup_data[to_time]" />
 					</div>
 					<div class="col-lg-9">
 						<div class="help-block">
@@ -699,57 +699,57 @@
 				</div>
 
 				<div class="form-group">
-					<label for="dpdgeopost_pickup_contact_name" class="control-label col-lg-12 required ps16">
-						{l s='Contact name' mod='dpdgeopost'}
+					<label for="dpdgroup_pickup_contact_name" class="control-label col-lg-12 required ps16">
+						{l s='Contact name' mod='dpdgroup'}
 					</label>
 					<div class="col-lg-12">
-						<input id="dpdgeopost_pickup_contact_name" type="text" value="{$employee->firstname|escape:'htmlall':'UTF-8'}" name="dpdgeopost_pickup_data[contact_name]" />
+						<input id="dpdgroup_pickup_contact_name" type="text" value="{$employee->firstname|escape:'htmlall':'UTF-8'}" name="dpdgroup_pickup_data[contact_name]" />
 					</div>
 					<div class="col-lg-9">
 						<div class="help-block">
-							{l s='Sender name' mod='dpdgeopost'}
+							{l s='Sender name' mod='dpdgroup'}
 						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="dpdgeopost_pickup_contact_email" class="control-label col-lg-12 required ps16">
-						{l s='Contact e-mail' mod='dpdgeopost'}
+					<label for="dpdgroup_pickup_contact_email" class="control-label col-lg-12 required ps16">
+						{l s='Contact e-mail' mod='dpdgroup'}
 					</label>
 					<div class="col-lg-12">
-						<input id="dpdgeopost_pickup_contact_email" type="text" value="{$employee->email|escape:'htmlall':'UTF-8'}" name="dpdgeopost_pickup_data[contact_email]" />
+						<input id="dpdgroup_pickup_contact_email" type="text" value="{$employee->email|escape:'htmlall':'UTF-8'}" name="dpdgroup_pickup_data[contact_email]" />
 					</div>
 					<div class="col-lg-9">
 						<div class="help-block">
-							{l s='Sender email' mod='dpdgeopost'}
+							{l s='Sender email' mod='dpdgroup'}
 						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="dpdgeopost_pickup_contact_phone" class="control-label col-lg-12 required ps16">
-						{l s='Contact phone no.' mod='dpdgeopost'}
+					<label for="dpdgroup_pickup_contact_phone" class="control-label col-lg-12 required ps16">
+						{l s='Contact phone no.' mod='dpdgroup'}
 					</label>
 					<div class="col-lg-12">
-						<input id="dpdgeopost_pickup_contact_phone" type="text" name="dpdgeopost_pickup_data[contact_phone]" />
+						<input id="dpdgroup_pickup_contact_phone" type="text" name="dpdgroup_pickup_data[contact_phone]" />
 					</div>
 					<div class="col-lg-9">
 						<div class="help-block">
-							{l s='Sender phone number' mod='dpdgeopost'}
+							{l s='Sender phone number' mod='dpdgroup'}
 						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="dpdgeopost_pickup_special_instruction" class="control-label col-lg-12">
-						{l s='Message to driver' mod='dpdgeopost'}
+					<label for="dpdgroup_pickup_special_instruction" class="control-label col-lg-12">
+						{l s='Message to driver' mod='dpdgroup'}
 					</label>
 					<div class="col-lg-12">
-						<textarea id="dpdgeopost_pickup_special_instruction" name="dpdgeopost_pickup_data[special_instruction]"></textarea>
+						<textarea id="dpdgroup_pickup_special_instruction" name="dpdgroup_pickup_data[special_instruction]"></textarea>
 					</div>
 					<div class="col-lg-9">
 						<div class="help-block">
-							{l s='Additional information' mod='dpdgeopost'}
+							{l s='Additional information' mod='dpdgroup'}
 						</div>
 					</div>
 				</div>
@@ -759,13 +759,13 @@
 
 			<div class="panel-footer clearfix">
 				<div class="buttons_container">
-					<button id="submit_dpdgeopost_pickup_dialog" class="btn btn-default pull-right" type="button">
+					<button id="submit_dpdgroup_pickup_dialog" class="btn btn-default pull-right" type="button">
 						<i class="icon-save"></i>
-						{l s='Submit' mod='dpdgeopost'}
+						{l s='Submit' mod='dpdgroup'}
 					</button>
-					<button id="close_dpdgeopost_pickup_dialog" class="btn btn-default pull-right" type="button">
+					<button id="close_dpdgroup_pickup_dialog" class="btn btn-default pull-right" type="button">
 						<i class="icon-remove"></i>
-						{l s='Cancel' mod='dpdgeopost'}
+						{l s='Cancel' mod='dpdgroup'}
 					</button>
 				</div>
 			</div>

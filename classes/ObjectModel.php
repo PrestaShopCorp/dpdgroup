@@ -21,7 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class DpdGeopostObjectModel extends ObjectModel
+class DpdGroupObjectModel extends ObjectModel
 {
 	public static $definition = array();
 
@@ -46,13 +46,13 @@ class DpdGeopostObjectModel extends ObjectModel
 		{
 			$caller_class_name = $this->getCallerClassName(); // child class name
 
-			if (isset($caller_class_name::$definition))
+			if (property_exists($caller_class_name, 'definition'))
 			{
-				$this->tables = array($caller_class_name::$definition['table']);
-				$this->table = $caller_class_name::$definition['table'];
-				$this->identifier = $caller_class_name::$definition['primary'];
+				$class_variables = get_class_vars($caller_class_name);
+				$this->table = $class_variables['definition']['table'];
+				$this->identifier = $class_variables['definition']['primary'];
 
-				foreach ($caller_class_name::$definition['fields'] as $field_name => $field)
+				foreach ($class_variables['definition']['fields'] as $field_name => $field)
 				{
 					if (!in_array($field_name, array('id_shop', 'date_upd', 'date_add')))
 					{
@@ -86,9 +86,11 @@ class DpdGeopostObjectModel extends ObjectModel
 			$caller_class_name = $this->getCallerClassName(); // child class name
 			$fields = array();
 
-			if (isset($caller_class_name::$definition))
+			if (property_exists($caller_class_name, 'definition'))
 			{
-				foreach ($caller_class_name::$definition['fields'] as $field_name => $field)
+				$class_variables = get_class_vars($caller_class_name);
+
+				foreach ($class_variables['definition']['fields'] as $field_name => $field)
 				{
 					if ($field_name == $this->identifier && isset($this->$field_name))
 						$fields[$field_name] = $this->$field_name;

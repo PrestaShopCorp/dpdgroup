@@ -1,14 +1,14 @@
-#dpdgeopost.fixed-width
+#dpdgroup.fixed-width
 {
 	width: 400px;
 }
 
-#dpdgeopost_create_shipment
+#dpdgroup_create_shipment
 {
 	float:right;
 }
 
-#dpdgeopost_shipment_creation
+#dpdgroup_shipment_creation
 {
 	display:none;
 	background:#EBEDF4;
@@ -25,17 +25,17 @@
 	margin-bottom: 20px;
 }
 
-#dpdgeopost_shipment_creation .parcel_description input
+#dpdgroup_shipment_creation .parcel_description input
 {
 	width: 98%;
 }
 
-#dpdgeopost_shipment_creation .error {
+#dpdgroup_shipment_creation .error {
 	background: url("../img/icon-cancel.png") no-repeat scroll 6px 6px #FFBABA;
 	border: 1px solid #CC0000;
 	color: #D8000C;
 }
-#dpdgeopost_shipment_creation .conf, #dpdgeopost_shipment_creation .warn, #dpdgeopost_shipment_creation .error {
+#dpdgroup_shipment_creation .conf, #dpdgroup_shipment_creation .warn, #dpdgroup_shipment_creation .error {
 	border-radius: 3px;
 	color: #383838;
 	font-size: 12px;
@@ -46,19 +46,19 @@
 	padding: 13px 5px 5px 40px;
 }
 
-#dpdgeopost_print_labels
+#dpdgroup_print_labels
 {
 	float:left;
     margin-right: 15px;
 }
 
-#dpdgeopost_shipment_creation, #dpdgeopost_edit_shipment, #dpdgeopost_delete_shipment
+#dpdgroup_shipment_creation, #dpdgroup_edit_shipment, #dpdgroup_delete_shipment
 {
 	float:right;
 	margin-left: 15px;
 }
 
-#dpdgeopost_shipment_creation_close
+#dpdgroup_shipment_creation_close
 {
 	margin-bottom: 20px;
     display:none;
@@ -90,7 +90,7 @@
 	float: right;
 }
 
-#dpdgeopost #ajax_running
+#dpdgroup #ajax_running
 {
 	background: url("../img/ajax-loader-yellow.gif") no-repeat scroll 15px 5px #fff1a8;
 	border: 1px solid #ffd96f;

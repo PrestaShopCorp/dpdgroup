@@ -18,16 +18,16 @@
 *  International Registered Trademark & Property of DPD Polska Sp. z o.o.
 */
 
-class DpdGeopostLanguage
+class DpdGroupLanguage
 {
-	const FILENAME = 'dpdgeopost.lang';
+	const FILENAME = 'dpdgroup.lang';
 
 	private $translations = array();
 	private $module_instance;
 
 	public function __construct()
 	{
-		$this->module_instance = Module::getInstanceByName('dpdgeopost');
+		$this->module_instance = Module::getInstanceByName('dpdgroup');
 
 		$this->translations = array(
 			'50052' => $this->module_instance->l('50052 - All shipments\' address must be same to close manifest', self::FILENAME),

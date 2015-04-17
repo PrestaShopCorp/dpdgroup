@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_'))
 $sql = array();
 
 $sql[] =
-	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_CSV_DB_.'` (
+	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGROUP_CSV_DB_.'` (
 		`id_csv` int(11) NOT NULL AUTO_INCREMENT,
 		`id_shop` int(11) NOT NULL,
 		`date_add` datetime DEFAULT NULL,
@@ -45,7 +45,7 @@ $sql[] =
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
 
 $sql[] =
-	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_PARCEL_DB_.'` (
+	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGROUP_PARCEL_DB_.'` (
 		`id_parcel` int(10) NOT NULL AUTO_INCREMENT,
 		`id_order` int(10) NOT NULL,
 		`parcel_reference_number` varchar(30) NOT NULL,
@@ -57,7 +57,7 @@ $sql[] =
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
 
 $sql[] =
-	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_CARRIER_DB_.'` (
+	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGROUP_CARRIER_DB_.'` (
 		`id_dpd_geopost_carrier` int(10) NOT NULL AUTO_INCREMENT,
 		`id_carrier` int(10) NOT NULL,
 		`id_reference` int(10) NOT NULL,
@@ -67,26 +67,26 @@ $sql[] =
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
 
 $sql[] =
-	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_SHIPMENT_DB_.'` (
+	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGROUP_SHIPMENT_DB_.'` (
 		`id_shipment` int(10) NOT NULL,
 		`id_order` int(10) NOT NULL,
 		`shipment_reference` VARCHAR(45) NULL DEFAULT NULL,
 		`id_manifest` int(10) NOT NULL DEFAULT "0",
-		`reference` varchar('.DpdGeopostManifest::REFERENCE_LENGTH.') NOT NULL,
+		`reference` varchar('.DpdGroupManifest::REFERENCE_LENGTH.') NOT NULL,
 		`label_printed` int(1) NOT NULL DEFAULT "0",
 		`date_pickup` datetime DEFAULT NULL,
 	PRIMARY KEY (`id_order`)
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
 
 $sql[] =
-	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_REFERENCE_DB_.'` (
+	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGROUP_REFERENCE_DB_.'` (
 		`id_order` int(10) NOT NULL,
-		`reference` varchar('.DpdGeopostManifest::REFERENCE_LENGTH.') NOT NULL,
+		`reference` varchar('.DpdGroupManifest::REFERENCE_LENGTH.') NOT NULL,
 	PRIMARY KEY (`id_order`)
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8';
 
 $sql[] =
-	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_.'` (
+	'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'` (
 		`id_postcode` int(10) unsigned NOT NULL AUTO_INCREMENT,
 		`postcode` varchar(10) NOT NULL,
 		`region` varchar(50) NULL,
@@ -109,15 +109,18 @@ $sql[] =
 	KEY `region_3` (`region`,`city`,`address`)
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
-$postcodes = Tools::file_get_contents(_DPDGEOPOST_SQL_DIR_.'data.sql');
-$postcodes = str_replace('zitec_dpd_postcodes', _DB_PREFIX_._DPDGEOPOST_POSTCODE_DB_, $postcodes);
+$postcodes = Tools::file_get_contents(_DPDGROUP_SQL_DIR_.'data.sql');
+$postcodes = str_replace('zitec_dpd_postcodes', _DB_PREFIX_._DPDGROUP_POSTCODE_DB_, $postcodes);
 $postcodes = explode(';', $postcodes);
 
 foreach ($postcodes as $query)
 	if ($query)
 		$sql[] = $query.';';
 
-$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'` (
+$database_table_install_error = false; /* must be defined to avoid PrestaShop validator error */
+$price_rules_data_intall_error = false; /* must be defined to avoid PrestaShop validator error */
+
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'` (
 		`dpd_postcode_id` int(11) DEFAULT NULL AUTO_INCREMENT ,
 		`id_address` int(11) NOT NULL,
 		`hash` varchar(100) NULL,
@@ -129,49 +132,53 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'` (
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 $sql[] = 'CREATE TRIGGER dpd_trigger_update_address AFTER UPDATE ON '._DB_PREFIX_.'address
-	FOR EACH ROW  UPDATE '._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'
+	FOR EACH ROW  UPDATE '._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'
 	SET
-		'._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'.auto_postcode = NEW.postcode,
-		'._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'.relevance = 1
-	WHERE '._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'.id_address = NEW.id_address
-		AND '._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'.dpd_postcode_id > 0';
+		'._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'.auto_postcode = NEW.postcode,
+		'._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'.relevance = 1
+	WHERE '._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'.id_address = NEW.id_address
+		AND '._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'.dpd_postcode_id > 0';
 
 foreach ($sql as $query)
-	if (Db::getInstance()->execute($query) == false)
-	{
-		$this->_errors[] = $this->l('Could not add default price rules data');
-		return false;
-	}
+	if (!$database_table_install_error)
+		if (Db::getInstance()->execute($query) == false)
+			$database_table_install_error = true;
 
-$shops = version_compare(_PS_VERSION_, '1.5', '<') ? array('1' => 1) : Shop::getShops();
-$current_date = date('Y-m-d H:i:s');
-$currency = Currency::getDefaultCurrency();
-
-foreach (array_keys($shops) as $id_shop)
+if (!$database_table_install_error)
 {
-	$sql = '
-		INSERT INTO `'._DB_PREFIX_._DPDGEOPOST_CSV_DB_.'`
-			(`id_shop`, `date_add`, `date_upd`, `country`, `region`, `zip`, `weight_from`, `weight_to`, `shipping_price`,
-			`currency`, `method_id`)
-		VALUES
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "'.(int)_DPDGEOPOST_CLASSIC_ID_.'"),
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "'.(int)_DPDGEOPOST_12_ID_.'"),
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "'.(int)_DPDGEOPOST_10_ID_.'"),
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "'.(int)_DPDGEOPOST_SAME_DAY_ID_.'"),
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "'.(int)_DPDGEOPOST_B2C_ID_.'"),
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "'.(int)_DPDGEOPOST_INTERNATIONAL_ID_.'"),
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "'.(int)_DPDGEOPOST_BULGARIA_ID_.'"),
-			("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
-				"'.pSQL($currency->iso_code).'", "*")
-		';
+	$shops = version_compare(_PS_VERSION_, '1.5', '<') ? array('1' => 1) : Shop::getShops();
+	$current_date = date('Y-m-d H:i:s');
+	$currency = Currency::getDefaultCurrency();
 
-	if (!$result &= Db::getInstance()->execute($sql))
-		break;
+	foreach (array_keys($shops) as $id_shop)
+	{
+		if (!$price_rules_data_intall_error)
+		{
+			$sql = '
+			INSERT INTO `'._DB_PREFIX_._DPDGROUP_CSV_DB_.'`
+				(`id_shop`, `date_add`, `date_upd`, `country`, `region`, `zip`, `weight_from`, `weight_to`, `shipping_price`,
+				`currency`, `method_id`)
+			VALUES
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "'.(int)_DPDGROUP_CLASSIC_ID_.'"),
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "'.(int)_DPDGROUP_12_ID_.'"),
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "'.(int)_DPDGROUP_10_ID_.'"),
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "'.(int)_DPDGROUP_SAME_DAY_ID_.'"),
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "'.(int)_DPDGROUP_B2C_ID_.'"),
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "'.(int)_DPDGROUP_INTERNATIONAL_ID_.'"),
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "'.(int)_DPDGROUP_BULGARIA_ID_.'"),
+				("'.(int)$id_shop.'", "'.pSQL($current_date).'", "'.pSQL($current_date).'", "*", "*", "*", "0", "0.5", "0",
+					"'.pSQL($currency->iso_code).'", "*")
+			';
+
+			if (!Db::getInstance()->execute($sql))
+				$price_rules_data_intall_error = true;
+		}
+	}
 }

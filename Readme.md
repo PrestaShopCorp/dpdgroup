@@ -1,5 +1,5 @@
-DPD GeoPost
+DPD Group
 ========================
 
-DPD GeoPost shipping module
+DPD Group shipping module
 --------------

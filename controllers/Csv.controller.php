@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_'))
 	exit;
 
 
-class DpdGeopostCSVController extends DpdGeopostController
+class DpdGroupCSVController extends DpdGroupController
 {
 	private $csv_titles 				= array();
 
@@ -67,8 +67,8 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 		$limit = ' LIMIT '.(int)$start.', '.(int)$selected_pagination.' ';
 
-		$selected_products_data = DpdGeopostCSV::getAllData($limit);
-		$list_total = count(DpdGeopostCSV::getAllData());
+		$selected_products_data = DpdGroupCSV::getAllData($limit);
+		$list_total = count(DpdGroupCSV::getAllData());
 		$pagination = array(20, 50, 100, 300);
 
 		$total_pages = ceil($list_total / $selected_pagination);
@@ -89,19 +89,19 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 		$template_filename = version_compare(_PS_VERSION_, '1.6', '>=') ? 'csv_16' : 'csv';
 
-		return $this->context->smarty->fetch(_DPDGEOPOST_TPL_DIR_.'admin/'.$template_filename.'.tpl');
+		return $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/'.$template_filename.'.tpl');
 	}
 
 	public static function init()
 	{
-		$controller = new DpdGeopostCSVController;
+		$controller = new DpdGroupCSVController;
 
-		if (Tools::isSubmit(DpdGeopostCSVController::SETTINGS_SAVE_CSV_ACTION))
+		if (Tools::isSubmit(DpdGroupCSVController::SETTINGS_SAVE_CSV_ACTION))
 		{
 			$csv_data = $controller->readCSVData();
 			if ($csv_data === false)
 			{
-				DpdGeopost::addFlashError($controller->l('Wrong CSV file'));
+				DpdGroup::addFlashError($controller->l('Wrong CSV file'));
 				Tools::redirectAdmin($controller->module_instance->module_url.'&menu=csv');
 			}
 
@@ -111,20 +111,20 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 			if ($controller->saveCSVData($csv_data))
 			{
-				DpdGeopost::addFlashMessage($controller->l('CSV data was successfully saved'));
+				DpdGroup::addFlashMessage($controller->l('CSV data was successfully saved'));
 				Tools::redirectAdmin($controller->module_instance->module_url.'&menu=csv');
 			}
 			else
 			{
-				DpdGeopost::addFlashError($controller->l('CSV data could not be saved'));
+				DpdGroup::addFlashError($controller->l('CSV data could not be saved'));
 				Tools::redirectAdmin($controller->module_instance->module_url.'&menu=csv');
 			}
 		}
 
-		if (Tools::isSubmit(DpdGeopostCSVController::SETTINGS_DOWNLOAD_CSV_ACTION))
+		if (Tools::isSubmit(DpdGroupCSVController::SETTINGS_DOWNLOAD_CSV_ACTION))
 			$controller->generateCSV();
 
-		if (Tools::isSubmit(DpdGeopostCSVController::SETTINGS_DELETE_CSV_ACTION))
+		if (Tools::isSubmit(DpdGroupCSVController::SETTINGS_DELETE_CSV_ACTION))
 			$controller->deleteCSV();
 
 		return null;
@@ -132,20 +132,20 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 	private function deleteCSV()
 	{
-		if (DpdGeopostCSV::deleteAllData())
+		if (DpdGroupCSV::deleteAllData())
 		{
-			DpdGeopost::addFlashMessage($this->l('Price rules deleted successfully'));
+			DpdGroup::addFlashMessage($this->l('Price rules deleted successfully'));
 			Tools::redirectAdmin($this->module_instance->module_url.'&menu=csv');
 		}
 		else
-			DpdGeopost::addFlashError($this->l('Price rules could not be deleted'));
+			DpdGroup::addFlashError($this->l('Price rules could not be deleted'));
 	}
 
 	public function generateCSV()
 	{
 		$csv_data = array($this->csv_titles);
-		$csv_data = array_merge($csv_data, DpdGeopostCSV::getCSVData());
-		$this->arrayToCSV($csv_data, _DPDGEOPOST_CSV_FILENAME_.'.csv', _DPDGEOPOST_CSV_DELIMITER_);
+		$csv_data = array_merge($csv_data, DpdGroupCSV::getCSVData());
+		$this->arrayToCSV($csv_data, _DPDGROUP_CSV_FILENAME_.'.csv', _DPDGROUP_CSV_DELIMITER_);
 	}
 
 	private function arrayToCSV($array, $filename, $delimiter)
@@ -236,8 +236,8 @@ class DpdGeopostCSVController extends DpdGeopostController
 		if ($method_validation !== true)
 			$errors[] = sprintf(
 				$this->l('Method ID can be declared one value of: *, %1$d, %2$d, %3$d, %4$d, %5$d, %6$d, %7$d - invalid lines: %8$s'),
-				_DPDGEOPOST_CLASSIC_ID_, _DPDGEOPOST_10_ID_, _DPDGEOPOST_12_ID_, _DPDGEOPOST_SAME_DAY_ID_, _DPDGEOPOST_B2C_ID_,
-				_DPDGEOPOST_INTERNATIONAL_ID_, _DPDGEOPOST_BULGARIA_ID_, $method_validation
+				_DPDGROUP_CLASSIC_ID_, _DPDGROUP_10_ID_, _DPDGROUP_12_ID_, _DPDGROUP_SAME_DAY_ID_, _DPDGROUP_B2C_ID_,
+				_DPDGROUP_INTERNATIONAL_ID_, _DPDGROUP_BULGARIA_ID_, $method_validation
 			);
 
 		$surcharge_validation = $this->validateCSVCODSurcharge($csv_data, $csv_data_count);
@@ -273,7 +273,7 @@ class DpdGeopostCSVController extends DpdGeopostController
 	private function validateCSVStructure($csv_data, $csv_data_count)
 	{
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if (!isset($csv_data[$i][DpdGeopostCSV::COLUMN_COD_MIN_SURCHARGE]))
+			if (!isset($csv_data[$i][DpdGroupCSV::COLUMN_COD_MIN_SURCHARGE]))
 				return false;
 		return true;
 	}
@@ -283,7 +283,7 @@ class DpdGeopostCSVController extends DpdGeopostController
 		$wrong_countries = '';
 		for ($i = 0; $i < $csv_data_count; $i++)
 		{
-			if (!$this->validateCSVCountry($csv_data[$i][DpdGeopostCSV::COLUMN_COUNTRY]))
+			if (!$this->validateCSVCountry($csv_data[$i][DpdGroupCSV::COLUMN_COUNTRY]))
 				$wrong_countries .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 		}
 
@@ -304,15 +304,15 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 		for ($i = 0; $i < $csv_data_count; $i++)
 		{
-			if ($this->validateCSVCountry($csv_data[$i][DpdGeopostCSV::COLUMN_COUNTRY]) && $csv_data[$i][DpdGeopostCSV::COLUMN_REGION] !== '*')
+			if ($this->validateCSVCountry($csv_data[$i][DpdGroupCSV::COLUMN_COUNTRY]) && $csv_data[$i][DpdGroupCSV::COLUMN_REGION] !== '*')
 			{
-				$id_state = (int)State::getIdByIso($csv_data[$i][DpdGeopostCSV::COLUMN_REGION]);
+				$id_state = (int)State::getIdByIso($csv_data[$i][DpdGroupCSV::COLUMN_REGION]);
 
-				if ($csv_data[$i][DpdGeopostCSV::COLUMN_COUNTRY] === '*')
+				if ($csv_data[$i][DpdGroupCSV::COLUMN_COUNTRY] === '*')
 					$wrong_regions .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 				else
 				{
-					$id_country = (int)Country::getByIso($csv_data[$i][DpdGeopostCSV::COLUMN_COUNTRY]);
+					$id_country = (int)Country::getByIso($csv_data[$i][DpdGroupCSV::COLUMN_COUNTRY]);
 					$state = new State((int)$id_state);
 					if ($state->id_country != $id_country)
 						$wrong_regions_country .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
@@ -333,17 +333,17 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 		for ($i = 0; $i < $csv_data_count; $i++)
 		{
-			if ($this->validateCSVCountry($csv_data[$i][DpdGeopostCSV::COLUMN_COUNTRY]))
+			if ($this->validateCSVCountry($csv_data[$i][DpdGroupCSV::COLUMN_COUNTRY]))
 			{
-				if ($csv_data[$i][DpdGeopostCSV::COLUMN_COUNTRY] === '*')
+				if ($csv_data[$i][DpdGroupCSV::COLUMN_COUNTRY] === '*')
 				{
-					if ($csv_data[$i][DpdGeopostCSV::COLUMN_ZIP] !== '*')
+					if ($csv_data[$i][DpdGroupCSV::COLUMN_ZIP] !== '*')
 						$wrong_zips_detected .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 				}
-				elseif ($csv_data[$i][DpdGeopostCSV::COLUMN_ZIP] !== '*')
+				elseif ($csv_data[$i][DpdGroupCSV::COLUMN_ZIP] !== '*')
 				{
-					$id_country = (int)Country::getByIso($csv_data[$i][DpdGeopostCSV::COLUMN_COUNTRY]);
-					if (!$this->checkCSVZip($id_country, $csv_data[$i][DpdGeopostCSV::COLUMN_ZIP]))
+					$id_country = (int)Country::getByIso($csv_data[$i][DpdGroupCSV::COLUMN_COUNTRY]);
+					if (!$this->checkCSVZip($id_country, $csv_data[$i][DpdGroupCSV::COLUMN_ZIP]))
 						$wrong_zips .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 				}
 			}
@@ -365,7 +365,7 @@ class DpdGeopostCSVController extends DpdGeopostController
 	{
 		$wrong_weights = '';
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if (!Validate::isUnsignedFloat($csv_data[$i][DpdGeopostCSV::COLUMN_WEIGHT_FROM]))
+			if (!Validate::isUnsignedFloat($csv_data[$i][DpdGroupCSV::COLUMN_WEIGHT_FROM]))
 				$wrong_weights .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 
 		$this->removeLastSymbolsFromString($wrong_weights);
@@ -377,8 +377,8 @@ class DpdGeopostCSVController extends DpdGeopostController
 	{
 		$wrong_weights = '';
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if (!Validate::isUnsignedFloat($csv_data[$i][DpdGeopostCSV::COLUMN_WEIGHT_TO]) ||
-				$csv_data[$i][DpdGeopostCSV::COLUMN_WEIGHT_TO] < $csv_data[$i][DpdGeopostCSV::COLUMN_WEIGHT_FROM])
+			if (!Validate::isUnsignedFloat($csv_data[$i][DpdGroupCSV::COLUMN_WEIGHT_TO]) ||
+				$csv_data[$i][DpdGroupCSV::COLUMN_WEIGHT_TO] < $csv_data[$i][DpdGroupCSV::COLUMN_WEIGHT_FROM])
 				$wrong_weights .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 
 		$this->removeLastSymbolsFromString($wrong_weights);
@@ -390,8 +390,8 @@ class DpdGeopostCSVController extends DpdGeopostController
 	{
 		$wrong_prices = '';
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if ($this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PRICE]) &&
-				!Validate::isUnsignedFloat($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PRICE]))
+			if ($this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PRICE]) &&
+				!Validate::isUnsignedFloat($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PRICE]))
 				$wrong_prices .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 
 		$this->removeLastSymbolsFromString($wrong_prices);
@@ -410,13 +410,13 @@ class DpdGeopostCSVController extends DpdGeopostController
 		$wrongly_defined_percentages = '';
 
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if ($this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PRICE]) &&
-				$this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PERCENTAGE]) ||
-				!$this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PRICE]) &&
-				!$this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PERCENTAGE]))
+			if ($this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PRICE]) &&
+				$this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PERCENTAGE]) ||
+				!$this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PRICE]) &&
+				!$this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PERCENTAGE]))
 				$wrongly_defined_percentages .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
-			elseif ($this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PERCENTAGE]) &&
-				!Validate::isUnsignedFloat($csv_data[$i][DpdGeopostCSV::COLUMN_SHIPPING_PERCENTAGE]))
+			elseif ($this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PERCENTAGE]) &&
+				!Validate::isUnsignedFloat($csv_data[$i][DpdGroupCSV::COLUMN_SHIPPING_PERCENTAGE]))
 				$wrong_percentages .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 
 		$this->removeLastSymbolsFromString($wrong_percentages);
@@ -438,7 +438,7 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 		$wrong_currencies = '';
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if (!in_array($csv_data[$i][DpdGeopostCSV::COLUMN_CURRENCY], $available_currencies))
+			if (!in_array($csv_data[$i][DpdGroupCSV::COLUMN_CURRENCY], $available_currencies))
 				$wrong_currencies .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 
 		$this->removeLastSymbolsFromString($wrong_currencies);
@@ -449,20 +449,20 @@ class DpdGeopostCSVController extends DpdGeopostController
 	private function validateCSVMethods($csv_data, $csv_data_count)
 	{
 		$available_methods = array(
-			_DPDGEOPOST_CLASSIC_ID_,
-			_DPDGEOPOST_10_ID_,
-			_DPDGEOPOST_12_ID_,
-			_DPDGEOPOST_SAME_DAY_ID_,
-			_DPDGEOPOST_B2C_ID_,
-			_DPDGEOPOST_INTERNATIONAL_ID_,
-			_DPDGEOPOST_BULGARIA_ID_,
+			_DPDGROUP_CLASSIC_ID_,
+			_DPDGROUP_10_ID_,
+			_DPDGROUP_12_ID_,
+			_DPDGROUP_SAME_DAY_ID_,
+			_DPDGROUP_B2C_ID_,
+			_DPDGROUP_INTERNATIONAL_ID_,
+			_DPDGROUP_BULGARIA_ID_,
 			'*'
 		);
 
 		$wrong_methods = '';
 
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if (!in_array($csv_data[$i][DpdGeopostCSV::COLUMN_METHOD_ID], $available_methods))
+			if (!in_array($csv_data[$i][DpdGroupCSV::COLUMN_METHOD_ID], $available_methods))
 				$wrong_methods .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 
 		$this->removeLastSymbolsFromString($wrong_methods);
@@ -475,8 +475,8 @@ class DpdGeopostCSVController extends DpdGeopostController
 		$wrong_surcharges = '';
 
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if ($this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_COD_SURCHARGE]) &&
-				!Validate::isUnsignedFloat($csv_data[$i][DpdGeopostCSV::COLUMN_COD_SURCHARGE]))
+			if ($this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_COD_SURCHARGE]) &&
+				!Validate::isUnsignedFloat($csv_data[$i][DpdGroupCSV::COLUMN_COD_SURCHARGE]))
 				$wrong_surcharges .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 
 		$this->removeLastSymbolsFromString($wrong_surcharges);
@@ -490,11 +490,11 @@ class DpdGeopostCSVController extends DpdGeopostController
 		$wrong_percentages_defined = '';
 
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if ($this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_COD_SURCHARGE_PERCENTAGE]))
+			if ($this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_COD_SURCHARGE_PERCENTAGE]))
 			{
-				if (!Validate::isUnsignedFloat($csv_data[$i][DpdGeopostCSV::COLUMN_COD_SURCHARGE_PERCENTAGE]))
+				if (!Validate::isUnsignedFloat($csv_data[$i][DpdGroupCSV::COLUMN_COD_SURCHARGE_PERCENTAGE]))
 					$wrong_percentages .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
-				elseif ($this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_COD_SURCHARGE]))
+				elseif ($this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_COD_SURCHARGE]))
 					$wrong_percentages_defined .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 			}
 
@@ -510,11 +510,11 @@ class DpdGeopostCSVController extends DpdGeopostController
 		$wrong_min_surcharges_defined = '';
 
 		for ($i = 0; $i < $csv_data_count; $i++)
-			if ($this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_COD_MIN_SURCHARGE]))
+			if ($this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_COD_MIN_SURCHARGE]))
 			{
-				if (!Validate::isUnsignedFloat($csv_data[$i][DpdGeopostCSV::COLUMN_COD_MIN_SURCHARGE]))
+				if (!Validate::isUnsignedFloat($csv_data[$i][DpdGroupCSV::COLUMN_COD_MIN_SURCHARGE]))
 					$wrong_min_surcharges .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
-				elseif (!$this->isNotEmpty($csv_data[$i][DpdGeopostCSV::COLUMN_COD_SURCHARGE_PERCENTAGE]))
+				elseif (!$this->isNotEmpty($csv_data[$i][DpdGroupCSV::COLUMN_COD_SURCHARGE_PERCENTAGE]))
 					$wrong_min_surcharges_defined .= ($i + self::DEFAULT_FIRST_LINE_INDEX).', ';
 			}
 
@@ -533,15 +533,15 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 	private function readCSVData()
 	{
-		if ($_FILES[DpdGeopostCSV::CSV_FILE]['error'] || !preg_match('/.*\.csv$/i', $_FILES[DpdGeopostCSV::CSV_FILE]['name']))
+		if ($_FILES[DpdGroupCSV::CSV_FILE]['error'] || !preg_match('/.*\.csv$/i', $_FILES[DpdGroupCSV::CSV_FILE]['name']))
 			return false;
 
 		$csv_data = array();
 		$row = 0;
 
-		if (($handle = fopen($_FILES[DpdGeopostCSV::CSV_FILE]['tmp_name'], 'r')) !== false)
+		if (($handle = fopen($_FILES[DpdGroupCSV::CSV_FILE]['tmp_name'], 'r')) !== false)
 		{
-			while (($data = fgetcsv($handle, 1000, _DPDGEOPOST_CSV_DELIMITER_)) !== false)
+			while (($data = fgetcsv($handle, 1000, _DPDGROUP_CSV_DELIMITER_)) !== false)
 			{
 				if (!$data) continue;
 				$csv_data_line = array();
@@ -562,27 +562,27 @@ class DpdGeopostCSVController extends DpdGeopostController
 
 	private function saveCSVData($csv_data)
 	{
-		if (!DpdGeopostCSV::deleteAllData())
+		if (!DpdGroupCSV::deleteAllData())
 			return false;
 
 		$success = true;
 
 		foreach ($csv_data as $data)
 		{
-			$csv = new DpdGeopostCSV();
+			$csv = new DpdGroupCSV();
 			$csv->id_shop 					= (int)$this->context->shop->id;
-			$csv->country 					= $data[DpdGeopostCSV::COLUMN_COUNTRY];
-			$csv->region 					= $data[DpdGeopostCSV::COLUMN_REGION];
-			$csv->zip 						= $data[DpdGeopostCSV::COLUMN_ZIP];
-			$csv->weight_from 				= $data[DpdGeopostCSV::COLUMN_WEIGHT_FROM];
-			$csv->weight_to 				= $data[DpdGeopostCSV::COLUMN_WEIGHT_TO];
-			$csv->shipping_price 			= $data[DpdGeopostCSV::COLUMN_SHIPPING_PRICE];
-			$csv->shipping_price_percentage = $data[DpdGeopostCSV::COLUMN_SHIPPING_PERCENTAGE];
-			$csv->currency 					= $data[DpdGeopostCSV::COLUMN_CURRENCY];
-			$csv->method_id 				= $data[DpdGeopostCSV::COLUMN_METHOD_ID];
-			$csv->cod_surcharge 			= $data[DpdGeopostCSV::COLUMN_COD_SURCHARGE];
-			$csv->cod_surcharge_percentage 	= $data[DpdGeopostCSV::COLUMN_COD_SURCHARGE_PERCENTAGE];
-			$csv->cod_min_surcharge 		= $data[DpdGeopostCSV::COLUMN_COD_MIN_SURCHARGE];
+			$csv->country 					= $data[DpdGroupCSV::COLUMN_COUNTRY];
+			$csv->region 					= $data[DpdGroupCSV::COLUMN_REGION];
+			$csv->zip 						= $data[DpdGroupCSV::COLUMN_ZIP];
+			$csv->weight_from 				= $data[DpdGroupCSV::COLUMN_WEIGHT_FROM];
+			$csv->weight_to 				= $data[DpdGroupCSV::COLUMN_WEIGHT_TO];
+			$csv->shipping_price 			= $data[DpdGroupCSV::COLUMN_SHIPPING_PRICE];
+			$csv->shipping_price_percentage = $data[DpdGroupCSV::COLUMN_SHIPPING_PERCENTAGE];
+			$csv->currency 					= $data[DpdGroupCSV::COLUMN_CURRENCY];
+			$csv->method_id 				= $data[DpdGroupCSV::COLUMN_METHOD_ID];
+			$csv->cod_surcharge 			= $data[DpdGroupCSV::COLUMN_COD_SURCHARGE];
+			$csv->cod_surcharge_percentage 	= $data[DpdGroupCSV::COLUMN_COD_SURCHARGE_PERCENTAGE];
+			$csv->cod_min_surcharge 		= $data[DpdGroupCSV::COLUMN_COD_MIN_SURCHARGE];
 			$success &= $csv->save();
 		}
 

@@ -52,24 +52,24 @@ $(document).ready(function(){
 		{
 			var available_pickup = validateShipmentsForPickup();
 			if (available_pickup)
-				$('#dpdgeopost_pickup_dialog').bPopup();
+				$('#dpdgroup_pickup_dialog').bPopup();
 			else
-				alert(dpdgeopost_error_puckup_not_available);
+				alert(dpdgroup_error_puckup_not_available);
 		}
 		else
-			alert(dpdgeopost_error_no_shipment_selected);
+			alert(dpdgroup_error_no_shipment_selected);
 	});
 
-	$('#close_dpdgeopost_pickup_dialog').click(function(){
-		$('#dpdgeopost_pickup_dialog').bPopup().close();
+	$('#close_dpdgroup_pickup_dialog').click(function(){
+		$('#dpdgroup_pickup_dialog').bPopup().close();
 	});
 
-	$('#submit_dpdgeopost_pickup_dialog').click(function(){
+	$('#submit_dpdgroup_pickup_dialog').click(function(){
 		$('#ajax_running').slideDown();
 
 		var ajax_request_params = 'ajax=true&arrangePickup=true';
 
-		$('#dpdgeopost_pickup_dialog :input[name^="dpdgeopost_pickup_data"]').each(function(){
+		$('#dpdgroup_pickup_dialog :input[name^="dpdgroup_pickup_data"]').each(function(){
 			ajax_request_params+='&'+$(this).attr('name')+'='+encodeURIComponent($(this).val());
 		});
 
@@ -86,7 +86,7 @@ $(document).ready(function(){
 			success: function(resp)
 			{
 				if (resp.error)
-					$('#dpdgeopost_pickup_dialog #dpdgeopost_pickup_dialog_mssg').hide().html('<p class="error alert alert-danger">'+resp.error+'</p>').slideDown();
+					$('#dpdgroup_pickup_dialog #dpdgroup_pickup_dialog_mssg').hide().html('<p class="error alert alert-danger">'+resp.error+'</p>').slideDown();
 				else
 				   window.location.reload();
 				$('#ajax_running').slideUp();

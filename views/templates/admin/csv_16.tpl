@@ -20,51 +20,51 @@
 	@media (max-width: 992px) {
 		.table-responsive-row td:nth-of-type(1):before
 		{
-			content: "{l s='Country' mod='dpdgeopost'}";
+			content: "{l s='Country' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(2):before
 		{
-			content: "{l s='Region / State' mod='dpdgeopost'}";
+			content: "{l s='Region / State' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(3):before
 		{
-			content: "{l s='Zip / Postal Code ' mod='dpdgeopost'}";
+			content: "{l s='Zip / Postal Code ' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(4):before
 		{
-			content: "{l s='Weight / Price (From)' mod='dpdgeopost'}";
+			content: "{l s='Weight / Price (From)' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(5):before
 		{
-			content: "{l s='Weight / Price (To)' mod='dpdgeopost'}";
+			content: "{l s='Weight / Price (To)' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(6):before
 		{
-			content: "{l s='Shipping Price' mod='dpdgeopost'}";
+			content: "{l s='Shipping Price' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(7):before
 		{
-			content: "{l s='Shipping Price Percentage' mod='dpdgeopost'}";
+			content: "{l s='Shipping Price Percentage' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(8):before
 		{
-			content: "{l s='Currency' mod='dpdgeopost'}";
+			content: "{l s='Currency' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(9):before
 		{
-			content: "{l s='Method ID' mod='dpdgeopost'}";
+			content: "{l s='Method ID' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(10):before
 		{
-			content: "{l s='COD Surcharge' mod='dpdgeopost'}";
+			content: "{l s='COD Surcharge' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(11):before
 		{
-			content: "{l s='COD Surcharge Percentage' mod='dpdgeopost'}";
+			content: "{l s='COD Surcharge Percentage' mod='dpdgroup'}";
 		}
 		.table-responsive-row td:nth-of-type(12):before
 		{
-			content: "{l s='COD Min. Surcharge' mod='dpdgeopost'}";
+			content: "{l s='COD Min. Surcharge' mod='dpdgroup'}";
 		}
 	}
 </style>
@@ -74,18 +74,18 @@
 	<div id="configuration_csv_options" class="panel">
 		<div class="panel-heading">
 			<i class="icon-cogs"></i>
-			{l s='Price rules import' mod='dpdgeopost'}
+			{l s='Price rules import' mod='dpdgroup'}
 		</div>
 
 		<div class="form-wrapper">
 			<div class="form-group">
 				<label class="control-label col-lg-3">
-					{l s='Upload CSV:' mod='dpdgeopost'}
+					{l s='Upload CSV:' mod='dpdgroup'}
 				</label>
 				<div class="col-lg-9">
 					<div class="form-group">
 						<div class="col-sm-6">
-							<input type="file" class="hide" name="{DpdGeopostCSV::CSV_FILE|escape:'htmlall':'UTF-8'}" id="csv_file_select">
+							<input type="file" class="hide" name="{DpdGroupCSV::CSV_FILE|escape:'htmlall':'UTF-8'}" id="csv_file_select">
 							<div class="dummyfile input-group">
 								<span class="input-group-addon">
 									<i class="icon-file"></i>
@@ -93,16 +93,16 @@
 								<input type="text" readonly="" name="filename" id="csv_file_select_name" />
 								<span class="input-group-btn">
 									<button class="btn btn-default" name="submitAddAttachments" type="button" id="csv_file_select_button">
-										<i class="icon-folder-open"></i>{l s='Select CSV' mod='dpdgeopost'}
+										<i class="icon-folder-open"></i>{l s='Select CSV' mod='dpdgroup'}
 									</button>
 								</span>
 							</div>
 						</div>
 						<div class="col-sm-6">
 							<div class="dummyfile input-group">
-								<button id="generate-friendly-url" name="{DpdGeopostCSVController::SETTINGS_SAVE_CSV_ACTION|escape:'htmlall':'UTF-8'}" class="btn btn-default" type="submit">
+								<button id="generate-friendly-url" name="{DpdGroupCSVController::SETTINGS_SAVE_CSV_ACTION|escape:'htmlall':'UTF-8'}" class="btn btn-default" type="submit">
 									<i class="icon-plus-sign"></i>
-									{l s='Upload' mod='dpdgeopost'}
+									{l s='Upload' mod='dpdgroup'}
 								</button>
 							</div>
 						</div>
@@ -112,14 +112,14 @@
 
 			<div class="form-group">
 				<label class="control-label col-lg-3">
-					{l s='Download CSV:' mod='dpdgeopost'}
+					{l s='Download CSV:' mod='dpdgroup'}
 				</label>
 				<div class="col-lg-9">
 					<div class="form-group">
 						<div class="col-sm-6">
-							<button id="generate-friendly-url" name="{DpdGeopostCSVController::SETTINGS_DOWNLOAD_CSV_ACTION|escape:'htmlall':'UTF-8'}" class="btn btn-default" type="submit">
+							<button id="generate-friendly-url" name="{DpdGroupCSVController::SETTINGS_DOWNLOAD_CSV_ACTION|escape:'htmlall':'UTF-8'}" class="btn btn-default" type="submit">
 								<i class="icon-arrow-down"></i>
-								{l s='Download' mod='dpdgeopost'}
+								{l s='Download' mod='dpdgroup'}
 							</button>
 						</div>
 					</div>
@@ -130,56 +130,56 @@
 
 			<div class="form-group">
 				<label class="control-label col-lg-3">
-					{l s='Preview imported prices:' mod='dpdgeopost'}
+					{l s='Preview imported prices:' mod='dpdgroup'}
 				</label>
 				<div class="col-lg-9">
 					<p class="preference_description">
-						{l s='Available shiping methods and their IDs:' mod='dpdgeopost'}
+						{l s='Available shiping methods and their IDs:' mod='dpdgroup'}
 					</p>
 					<p class="preference_description">
-						{l s='* DPD Classic: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_CLASSIC_ID_|escape:'htmlall':'UTF-8'}
+						{l s='* DPD Classic: ID -' mod='dpdgroup'} {$smarty.const._DPDGROUP_CLASSIC_ID_|escape:'htmlall':'UTF-8'}
 					</p>
 					<p class="preference_description">
-						{l s='* DPD 10:00: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_10_ID_|escape:'htmlall':'UTF-8'}
+						{l s='* DPD 10:00: ID -' mod='dpdgroup'} {$smarty.const._DPDGROUP_10_ID_|escape:'htmlall':'UTF-8'}
 					</p>
 					<p class="preference_description">
-						{l s='* DPD 12:00: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_12_ID_|escape:'htmlall':'UTF-8'}
+						{l s='* DPD 12:00: ID -' mod='dpdgroup'} {$smarty.const._DPDGROUP_12_ID_|escape:'htmlall':'UTF-8'}
 					</p>
 					<p class="preference_description">
-						{l s='* DPD Same Day: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_SAME_DAY_ID_|escape:'htmlall':'UTF-8'}
+						{l s='* DPD Same Day: ID -' mod='dpdgroup'} {$smarty.const._DPDGROUP_SAME_DAY_ID_|escape:'htmlall':'UTF-8'}
 					</p>
 					<p class="preference_description">
-						{l s='* DPD B2C: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_B2C_ID_|escape:'htmlall':'UTF-8'}
+						{l s='* DPD B2C: ID -' mod='dpdgroup'} {$smarty.const._DPDGROUP_B2C_ID_|escape:'htmlall':'UTF-8'}
 					</p>
 					<p class="preference_description">
-						{l s='* DPD International: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_INTERNATIONAL_ID_|escape:'htmlall':'UTF-8'}
+						{l s='* DPD International: ID -' mod='dpdgroup'} {$smarty.const._DPDGROUP_INTERNATIONAL_ID_|escape:'htmlall':'UTF-8'}
 					</p>
 					<p class="preference_description">
-						{l s='* DPD Bulgaria: ID -' mod='dpdgeopost'} {$smarty.const._DPDGEOPOST_BULGARIA_ID_|escape:'htmlall':'UTF-8'}
+						{l s='* DPD Bulgaria: ID -' mod='dpdgroup'} {$smarty.const._DPDGROUP_BULGARIA_ID_|escape:'htmlall':'UTF-8'}
 					</p>
 					<br />
 
 					<p class="preference_description">
-						{l s='Decimal separator symbol is: "."' mod='dpdgeopost'}
+						{l s='Decimal separator symbol is: "."' mod='dpdgroup'}
 					</p>
 
 					<p class="preference_description">
-						{l s='Maximum decimal numbers: 6' mod='dpdgeopost'}
+						{l s='Maximum decimal numbers: 6' mod='dpdgroup'}
 					</p>
 
 					<p class="preference_description">
-						{l s='Please also check module settings page in order to be sure that correct price calculation method is selected.' mod='dpdgeopost'}
+						{l s='Please also check module settings page in order to be sure that correct price calculation method is selected.' mod='dpdgroup'}
 					</p>
 
 					<div class="toggle_csv_info_link_container">
-						<a id="toggle_csv_info_link">{l s='Instructions how to import CSV price rules →' mod='dpdgeopost'}</a>
+						<a id="toggle_csv_info_link">{l s='Instructions how to import CSV price rules →' mod='dpdgroup'}</a>
 					</div>
 					<div id="toggle_csv_info">
-						{include file=$smarty.const._PS_MODULE_DIR_|cat:'dpdgeopost/views/templates/admin/csv_info.tpl'}
+						{include file=$smarty.const._PS_MODULE_DIR_|cat:'dpdgroup/views/templates/admin/csv_info.tpl'}
 					</div>
 
 					<div class="alert alert-info">
-						{l s='The first matching rule will be used for price calculation. Make sure your CSV rules arre in correct order!' mod='dpdgeopost'}
+						{l s='The first matching rule will be used for price calculation. Make sure your CSV rules arre in correct order!' mod='dpdgroup'}
 					</div>
 				</div>
 			</div>
@@ -187,7 +187,7 @@
 			<div class="form-group">
 				<div class="panel col-lg-12">
 					<div class="panel-heading">
-						{l s='Price rules' mod='dpdgeopost'} <span class="badge">{$list_total|intval}</span>
+						{l s='Price rules' mod='dpdgroup'} <span class="badge">{$list_total|intval}</span>
 					</div>
 					<div class="table-responsive-row clearfix">
 						<table id="table-combinations-list" class="table configuration">
@@ -195,62 +195,62 @@
 								<tr class="nodrag nodrop">
 									<th class="center">
 										<span class="title_box">
-											{l s='Country' mod='dpdgeopost'}
+											{l s='Country' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Region / State' mod='dpdgeopost'}
+											{l s='Region / State' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Zip / Postal Code' mod='dpdgeopost'}
+											{l s='Zip / Postal Code' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Weight / Price (From)' mod='dpdgeopost'}
+											{l s='Weight / Price (From)' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Weight / Price (To)' mod='dpdgeopost'}
+											{l s='Weight / Price (To)' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Shipping Price' mod='dpdgeopost'}
+											{l s='Shipping Price' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Shipping Price Percentage' mod='dpdgeopost'}
+											{l s='Shipping Price Percentage' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Currency' mod='dpdgeopost'}
+											{l s='Currency' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='Method ID' mod='dpdgeopost'}
+											{l s='Method ID' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='COD Surcharge' mod='dpdgeopost'}
+											{l s='COD Surcharge' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='COD Surcharge Percentage' mod='dpdgeopost'}
+											{l s='COD Surcharge Percentage' mod='dpdgroup'}
 										</span>
 									</th>
 									<th class="center">
 										<span class="title_box">
-											{l s='COD Min. Surcharge' mod='dpdgeopost'}
+											{l s='COD Min. Surcharge' mod='dpdgroup'}
 										</span>
 									</th>
 									<th>
@@ -354,7 +354,7 @@
 								{else}
 									<tr>
 										<td colspan="13" class="center">
-											{l s='No prices' mod='dpdgeopost'}
+											{l s='No prices' mod='dpdgroup'}
 										</td>
 									</tr>
 								{/if}
@@ -365,7 +365,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="pagination">
-									{l s='Display' mod='dpdgeopost'}
+									{l s='Display' mod='dpdgroup'}
 									<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
 										{$selected_pagination|intval}
 										<i class="icon-caret-down"></i>
@@ -387,7 +387,7 @@
 											<a class="pagination-items-page" data-list-id="csv" data-items="1000" href="javascript:void(0);">1000</a>
 										</li>
 									</ul>
-									/ {$list_total|escape:'htmlall':'UTF-8'} {l s='result(s)' mod='dpdgeopost'}
+									/ {$list_total|escape:'htmlall':'UTF-8'} {l s='result(s)' mod='dpdgroup'}
 									<input id="csv-pagination-items-page" type="hidden" value="{$selected_pagination|intval}" name="pagination" />
 								</div>
 								<ul class="pagination pull-right">
@@ -444,9 +444,9 @@
 		</div>
 
 		<div class="panel-footer">
-			<button {if !isset($csv_data) || isset($csv_data) && empty($csv_data)}disabled="disabled"{/if} class="btn btn-default pull-right" name="{DpdGeopostCSVController::SETTINGS_DELETE_CSV_ACTION|escape:'htmlall':'UTF-8'}" type="submit">
+			<button {if !isset($csv_data) || isset($csv_data) && empty($csv_data)}disabled="disabled"{/if} class="btn btn-default pull-right" name="{DpdGroupCSVController::SETTINGS_DELETE_CSV_ACTION|escape:'htmlall':'UTF-8'}" type="submit">
 				<i class="process-icon-delete"></i>
-				{l s='Delete all prices' mod='dpdgeopost'}
+				{l s='Delete all prices' mod='dpdgroup'}
 			</button>
 		</div>
 	</div>

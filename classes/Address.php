@@ -18,7 +18,7 @@
  *  International Registered Trademark & Property of DPD Polska sp. z o.o.
  */
 
-class DpdGeopostDpdPostcodeAddress extends ObjectModel
+class DpdGroupDpdPostcodeAddress extends ObjectModel
 {
 	/* @var integer address id which postcode cached data belongs to */
 	public $dpd_postcode_id = null;
@@ -44,7 +44,7 @@ class DpdGeopostDpdPostcodeAddress extends ObjectModel
 	 * @see ObjectModel::$definition
 	 */
 	public static $definition = array(
-		'table'   => _DPDGEOPOST_ADDRESS_DB_,
+		'table'   => _DPDGROUP_ADDRESS_DB_,
 		'primary' => 'dpd_postcode_id',
 		'fields'  => array(
 			'dpd_postcode_id'	=> array('type' => self::TYPE_INT),
@@ -60,7 +60,7 @@ class DpdGeopostDpdPostcodeAddress extends ObjectModel
 	public function loadDpdAddressByAddressId($id_address)
 	{
 		$sql = 'SELECT `dpd_postcode_id`, `id_address`, `hash`, `auto_postcode`, `relevance`, `date_add`, `date_upd`
-			FROM `'._DB_PREFIX_._DPDGEOPOST_ADDRESS_DB_.'`
+			FROM `'._DB_PREFIX_._DPDGROUP_ADDRESS_DB_.'`
 			WHERE `id_address` = "'.(int)$id_address.'"';
 
 		if ($object_datas_lang = Db::getInstance()->executeS($sql))
