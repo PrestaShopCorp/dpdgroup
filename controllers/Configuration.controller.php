@@ -69,7 +69,7 @@ class DpdGroupConfigurationController extends DpdGroupController
 				'currency'		=> 'EUR'
 			),
 			'CZ' => array(
-				'title' 		=> $this->l('Czech Respublic'),
+				'title' 		=> $this->l('Czech Republic'),
 				'ws_uri_prod' 	=> 'https://it4em.dpd.cz/IT4EMWebServices/eshop/',
 				'ws_uri_test'	=> '',
 				'currency'		=> 'CZK'
