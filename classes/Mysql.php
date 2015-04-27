@@ -332,11 +332,7 @@ class DpdGroupDpdPostcodeMysql
 	 */
 	private function extractHouseNumbersFromDatabaseAddress($address)
 	{
-		$numbers = array();
-		$address = str_replace('.', ' ', $address);
-		$address = str_replace('/', ' ', $address);
-		$address = str_replace('\\', ' ', $address);
-		$address = str_replace('-', ' ', $address);
+		$address = str_replace(array('.', '/', '\\', '-'), array(' ', ' ', ' ', ' '), $address);
 		$words   = explode(' ', $address);
 
 		foreach ($words as $word)
@@ -366,10 +362,7 @@ class DpdGroupDpdPostcodeMysql
 		$numbers = array();
 		$house_number_identifiers = DpdGroupSearchModelCachedData::getHouseNumberIdentifier();
 		$house_number = null;
-		$address = str_replace('.', ' ', $address);
-		$address = str_replace('/', ' ', $address);
-		$address = str_replace('\\', ' ', $address);
-		$address = str_replace('-', ' ', $address);
+		$address = str_replace(array('.', '/', '\\', '-'), array(' ', ' ', ' ', ' '), $address);
 		$words = explode(' ', $address);
 		$last_word_was_the_identifier = false;
 		$skip_count = 0;

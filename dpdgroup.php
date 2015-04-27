@@ -27,7 +27,6 @@ require_once(_DPDGROUP_CONTROLLERS_DIR_.'Webservice.php');
 require_once(_DPDGROUP_CONTROLLERS_DIR_.'Messages.controller.php');
 
 require_once(_DPDGROUP_CLASSES_DIR_.'ObjectModel.php');
-require_once(_DPDGROUP_CLASSES_DIR_.'CSV.php');
 require_once(_DPDGROUP_CLASSES_DIR_.'Configuration.php');
 require_once(_DPDGROUP_CONTROLLERS_DIR_.'Shipment.webservice.php');
 require_once(_DPDGROUP_CONTROLLERS_DIR_.'Manifest.webservice.php');
@@ -208,13 +207,7 @@ class DpdGroup extends CarrierModule
 	{
 		$this->displayFlashMessagesIfIsset();
 
-		if ($this->ps_14)
-		{
-			$this->addJS(_DPDGROUP_JS_URI_.'backoffice.js');
-			$this->addCSS(_DPDGROUP_CSS_URI_.'backoffice.css');
-			$this->addCSS(_DPDGROUP_CSS_URI_.'toolbar.css');
-		}
-		else
+		if (!$this->ps_14)
 		{
 			$this->context->controller->addJS(_DPDGROUP_JS_URI_.'backoffice.js');
 
@@ -295,10 +288,7 @@ class DpdGroup extends CarrierModule
 			case 'shipment_list':
 			default:
 				if ($this->ps_14)
-				{
 					includeDatepicker(null);
-					$this->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
-				}
 				else
 				{
 					$this->context->controller->addJqueryUI(array(
@@ -438,14 +428,14 @@ class DpdGroup extends CarrierModule
 		$this->html .= $html;
 	}
 
-	public static function addCSS($css_uri)
+	private function addCSS($css_uri)
 	{
-		echo '<link href="'.$css_uri.'" rel="stylesheet" type="text/css">';
+		return '<link href="'.$css_uri.'" rel="stylesheet" type="text/css">';
 	}
 
-	public static function addJS($js_uri)
+	private function addJS($js_uri)
 	{
-		echo '<script src="'.$js_uri.'" type="text/javascript"></script>';
+		return '<script src="'.$js_uri.'" type="text/javascript"></script>';
 	}
 
 	private function displayNavigation()
@@ -599,6 +589,27 @@ class DpdGroup extends CarrierModule
 
 	public function hookBackOfficeHeader()
 	{
+		$html = '';
+
+		if ($this->ps_14)
+		{
+			$html .= $this->addJS(_DPDGROUP_JS_URI_.'backoffice.js');
+			$html .= $this->addCSS(_DPDGROUP_CSS_URI_.'backoffice.css');
+			$html .= $this->addCSS(_DPDGROUP_CSS_URI_.'toolbar.css');
+		}
+
+		if ($this->ps_14 && Tools::getValue('tab') == 'AdminOrders' && Tools::getValue('id_order'))
+		{
+			$html .= $this->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
+			$html .= $this->addJS(_DPDGROUP_JS_URI_.'adminOrder.js');
+			$html .= $this->addCSS(_DPDGROUP_CSS_URI_.'adminOrder.css');
+		}
+
+		$menu = Tools::getValue('menu');
+
+		if (!$menu || $menu == 'shipment_list')
+			$this->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
+
 		if ((Tools::getValue('controller') == 'AdminAddresses' || Tools::getValue('tab') == 'AdminAddresses') &&
 			(Tools::isSubmit('updateaddress') || Tools::isSubmit('addaddress') || Tools::isSubmit('submitAddaddress')))
 		{
@@ -611,12 +622,12 @@ class DpdGroup extends CarrierModule
 				$this->context->controller->addJS(_DPDGROUP_JS_URI_.'jquery-ui.min.js');
 			}
 			else
-				$this->addCSS(_DPDGROUP_CSS_URI_.'address_autocomplete.css');
+				$html .= $this->addCSS(_DPDGROUP_CSS_URI_.'address_autocomplete.css');
 
-			return $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/address_header.tpl');
+			$html .= $this->context->smarty->fetch(_DPDGROUP_TPL_DIR_.'admin/address_header.tpl');
 		}
 
-		return '';
+		return $html;
 	}
 
 	public function hookAdminOrder($params)
@@ -677,13 +688,7 @@ class DpdGroup extends CarrierModule
 			'display_product_weight_warning' => $this->orderProductsWithoutWeight($products)
 		));
 
-		if ($this->ps_14)
-		{
-			$this->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
-			$this->addJS(_DPDGROUP_JS_URI_.'adminOrder.js');
-			$this->addCSS(_DPDGROUP_CSS_URI_.'adminOrder.css');
-		}
-		else
+		if (!$this->ps_14)
 		{
 			$this->context->controller->addJS(_DPDGROUP_JS_URI_.'jquery.bpopup.min.js');
 			$this->context->controller->addJS(_DPDGROUP_JS_URI_.'adminOrder.js');

@@ -55,18 +55,15 @@ if (Tools::isSubmit('calculatePrice'))
 	$errors = array();
 
 	if (DpdGroupShipment::$errors)
-		foreach (DpdGroupShipment::$errors as $error)
-			$errors[] = $error;
+		$errors = DpdGroupShipment::$errors;
 
 	$price = $price !== false ? $price : '---';
 	$notices = DpdGroupShipment::$notices;
-	$shipment = new DpdGroupShipment((int)$id_order);
 	$order = new Order((int)$id_order);
 	$total_shipping = version_compare(_PS_VERSION_, '1.5', '>=') ? $order->total_shipping_tax_incl : $order->total_shipping;
 
 	if (DpdGroupShipment::$errors)
-		foreach (DpdGroupShipment::$errors as $error)
-			$errors[] = $error;
+		$errors = array_merge($errors, DpdGroupShipment::$errors);
 
 	if (!$shipment->id_shipment && !(int)Tools::getValue('method_id'))
 		$notices[] = $module_instance->l('Client did not selected DPD shipment, but you can use this shipment method.', $filename);

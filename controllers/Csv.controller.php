@@ -21,6 +21,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
+require_once(_DPDGROUP_CLASSES_DIR_.'CSV.php');
 
 class DpdGroupCSVController extends DpdGroupController
 {
