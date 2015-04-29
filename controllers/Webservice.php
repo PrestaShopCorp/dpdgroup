@@ -77,7 +77,6 @@ class DpdGroupWS extends DpdGroupController
 		{
 			$opts = array(
 				'ssl' => array(
-					'ciphers' => 'RC4-SHA',
 					'verify_peer' => false,
 					'verify_peer_name' => false
 				)
