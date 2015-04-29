@@ -317,6 +317,9 @@ class DpdGroupConfigurationController extends DpdGroupController
 			return $this->l('Webservice URL is not valid');
 		try
 		{
+			ini_set('soap.wsdl_cache_enabled', '0');
+			ini_set('soap.wsdl_cache', '0');
+
 			$opts = array(
 				'ssl' => array(
 					'verify_peer' => false,
