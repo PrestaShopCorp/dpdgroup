@@ -75,8 +75,17 @@ class DpdGroupWS extends DpdGroupController
 
 		try
 		{
+			$opts = array(
+				'ssl' => array(
+					'ciphers' => 'RC4-SHA',
+					'verify_peer' => false,
+					'verify_peer_name' => false
+				)
+			);
+
 			$url .= $this->service_name.'?wsdl';
-			$this->client = new SoapClient($url, array('connection_timeout' => (int)$this->config->ws_timeout, 'trace' => true));
+			$this->client = new SoapClient($url, array('stream_context' => stream_context_create($opts),
+				'connection_timeout' => (int)$this->config->ws_timeout, 'trace' => true));
 
 			return $this->client;
 		}

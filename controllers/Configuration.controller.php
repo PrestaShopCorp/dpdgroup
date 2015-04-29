@@ -317,7 +317,15 @@ class DpdGroupConfigurationController extends DpdGroupController
 			return $this->l('Webservice URL is not valid');
 		try
 		{
-			new SoapClient($wsdl_url.'PickupOrderServiceImpl?wsdl', array('trace' => true));
+			$opts = array(
+				'ssl' => array(
+					'ciphers' => 'RC4-SHA',
+					'verify_peer' => false,
+					'verify_peer_name' => false
+				)
+			);
+
+			new SoapClient($wsdl_url.'PickupOrderServiceImpl?wsdl', array('trace' => true, 'stream_context' => stream_context_create($opts)));
 		}
 		catch (Exception $e)
 		{
