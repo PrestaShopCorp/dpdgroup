@@ -742,6 +742,9 @@ class DpdGroupShipment extends DpdGroupWs
 		$product_name = isset($product['product_name']) ? $product['product_name'] : $product['name'];
 		$product_weight = isset($product['product_weight']) ? self::convertWeight($product['product_weight']) : self::convertWeight($product['weight']);
 
+		if (isset($product['quantity']) && $product['quantity'])
+			$product_weight *= (int)$product['quantity'];
+
 		$product = array(
 			'id_product' => (int)$id_product,
 			'id_product_attribute' => $id_product_attribute,
