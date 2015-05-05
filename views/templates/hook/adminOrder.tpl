@@ -17,12 +17,12 @@
 *  International Registered Trademark & Property of DPD Polska sp. z o.o.
 *}
 <script>
-	var dpd_geopost_ajax_uri = '{$dpd_geopost_ajax_uri|escape:'htmlall':'UTF-8'}';
-	var dpd_geopost_token = '{$dpd_geopost_token|escape:'htmlall':'UTF-8'}';
-	var dpd_geopost_id_shop = '{$dpd_geopost_id_shop|escape:'htmlall':'UTF-8'}';
-	var dpd_geopost_id_lang = '{$dpd_geopost_id_lang|escape:'htmlall':'UTF-8'}';
-	var dpd_geopost_weight_unit = '{$smarty.const._DPDGROUP_DEFAULT_WEIGHT_UNIT_|escape:'htmlall':'UTF-8'}';
-	var id_order = '{Tools::getValue('id_order')|escape:'htmlall':'UTF-8'}';
+	var dpd_geopost_ajax_uri = '{$dpd_geopost_ajax_uri|escape:'javascript':'UTF-8'}';
+	var dpd_geopost_token = '{$dpd_geopost_token|escape:'javascript':'UTF-8'}';
+	var dpd_geopost_id_shop = '{$dpd_geopost_id_shop|intval}';
+	var dpd_geopost_id_lang = '{$dpd_geopost_id_lang|intval}';
+	var dpd_geopost_weight_unit = '{$smarty.const._DPDGROUP_DEFAULT_WEIGHT_UNIT_|escape:'javascript':'UTF-8'}';
+	var id_order = '{Tools::getValue('id_order')|intval}';
 </script>
 {if isset($ps14) && $ps14}
 	{assign var="total_shipping_tax_incl" value=$order->total_shipping}
@@ -320,7 +320,7 @@
 		{else}
 			<div class="separation"></div>
 		{/if}
-		<a target="_blank" href="{$carrier_url|replace:'@':$order->shipping_number}">
+		<a target="_blank" href="{$carrier_url|replace:'@':$order->shipping_number|escape:'htmlall':'UTF-8'}">
 			<button id="track_shipment_button" class="button">
 				{l s='Track Shipment' mod='dpdgroup'}
 			</button>

@@ -805,6 +805,9 @@ class DpdGroupShipment extends DpdGroupWs
 
 	public function getShipmentList($order_by, $order_way, $filter, $start, $pagination)
 	{
+		if ($order_by && $order_way && (!Validate::isOrderBy($order_by) || !Validate::isOrderWay($order_way)))
+			return array();
+
 		$shipments = DB::getInstance()->executeS('
 			SELECT
 				s.`id_shipment`								AS `id_shipment`,
@@ -892,8 +895,8 @@ class DpdGroupShipment extends DpdGroupWs
 		$price_rules = DB::getInstance()->executeS('
 			SELECT `shipping_price`, `shipping_price_percentage`, `currency`, `cod_surcharge`, `cod_surcharge_percentage`, `cod_min_surcharge`
 			FROM `'._DB_PREFIX_._DPDGROUP_CSV_DB_.'`
-			WHERE `weight_from` <= '.pSQL($total_weight).'
-				AND `weight_to` >= '.pSQL($total_weight).'
+			WHERE `weight_from` <= "'.(float)$total_weight.'"
+				AND `weight_to` >= "'.(float)$total_weight.'"
 				AND (`country` = "'.pSQL($country_iso_code).'" OR `country` = "*")
 				AND (`region` = "'.pSQL($state_iso_code).'" OR `region` = "*")
 				AND (`zip` = "'.pSQL($postcode).'" OR `zip` = "*")

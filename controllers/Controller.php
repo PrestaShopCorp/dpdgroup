@@ -59,12 +59,13 @@ class DpdGroupController
 
 				if ($key == 'id_manifest')
 					$sql .= '`id_manifest` '.($value ? '!=' : '=').' "0" AND ';
-				elseif (Validate::isSerializedArray($value))
+				elseif (is_array(Tools::jsonDecode($value)))
 				{
-					if (version_compare(_PS_VERSION_, '1.5', '<'))
-						$date = unserialize($value);
-					else
-						$date = Tools::unSerialize($value);
+					$date = Tools::jsonDecode($value);
+					$date = array_filter($date);
+
+					if (!$date)
+						continue;
 
 					if (!empty($date[0]))
 						$sql .= '`'.bqSQL($key).'` > "'.pSQL($date[0]).'" AND ';

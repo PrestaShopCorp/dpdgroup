@@ -19,7 +19,7 @@
 <script>
 	var dpdgroup_error_no_shipment_selected = '{l s='Select at least one shipment' mod='dpdgroup' js=1}';
 	var dpdgroup_error_puckup_not_available = '{l s='To arrange pickup, manifest or label must be printed' mod='dpdgroup' js=1}';
-	var dpd_geopost_id_lang = '{$dpd_geopost_id_lang|escape:'htmlall':'UTF-8'}';
+	var dpd_geopost_id_lang = '{$dpd_geopost_id_lang|escape:'javascript':'UTF-8'}';
 	var ps14 = {if isset($ps14) && $ps14}1{else}0{/if};
 
 	$(document).ready(function(){
@@ -432,7 +432,7 @@
 											</a>
 											{if $shipments[ii].shipping_number && isset($shipments[ii].carrier_url)}
 												&nbsp;
-												<a target="_blank" title="{l s='Track Shipment' mod='dpdgroup'}" href="{$shipments[ii].carrier_url|replace:'@':$shipments[ii].shipping_number}">
+												<a target="_blank" title="{l s='Track Shipment' mod='dpdgroup'}" href="{$shipments[ii].carrier_url|replace:'@':$shipments[ii].shipping_number|escape:'htmlall':'UTF-8'}">
 													<img alt="{l s='Track Shipment' mod='dpdgroup'}" src="../img/admin/delivery.gif">
 												</a>
 											{/if}

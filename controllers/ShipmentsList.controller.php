@@ -153,7 +153,7 @@ class DpdGroupShipmentController extends DpdGroupController
 				if (strpos($key, 'ShipmentsFilter_') !== false) // looking for filter values in $_POST
 				{
 					if (is_array($value))
-						$this->context->cookie->$key = serialize($value);
+						$this->context->cookie->$key = Tools::jsonEncode($value);
 					else
 						$this->context->cookie->$key = $value;
 				}
@@ -166,6 +166,7 @@ class DpdGroupShipmentController extends DpdGroupController
 				if ($this->context->cookie->__isset('ShipmentsFilter_'.$key))
 				{
 					$this->context->cookie->__unset('ShipmentsFilter_'.$key);
+
 					unset($_POST['ShipmentsFilter_'.$key]);
 				}
 			}

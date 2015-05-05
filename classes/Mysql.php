@@ -334,6 +334,7 @@ class DpdGroupDpdPostcodeMysql
 	{
 		$address = str_replace(array('.', '/', '\\', '-'), array(' ', ' ', ' ', ' '), $address);
 		$words   = explode(' ', $address);
+		$numbers = array();
 
 		foreach ($words as $word)
 		{

@@ -17,8 +17,8 @@
 *  International Registered Trademark & Property of DPD Polska sp. z o.o.
 *}
 <script>
-	var dpd_geopost_ajax_uri = "{$dpd_geopost_ajax_uri|escape:'htmlall':'UTF-8'}";
-	var dpd_geopost_token = "{$dpd_geopost_token|escape:'htmlall':'UTF-8'}";
-	var dpd_geopost_id_shop = "{$dpd_geopost_id_shop|escape:'htmlall':'UTF-8'}";
-	var dpd_geopost_other_country = "{$dpd_geopost_other_country|escape:'htmlall':'UTF-8'}";
+	var dpd_geopost_ajax_uri = "{$dpd_geopost_ajax_uri|escape:'javascript':'UTF-8'}";
+	var dpd_geopost_token = "{$dpd_geopost_token|escape:'javascript':'UTF-8'}";
+	var dpd_geopost_id_shop = "{$dpd_geopost_id_shop|escape:'javascript':'UTF-8'}";
+	var dpd_geopost_other_country = "{$dpd_geopost_other_country|escape:'javascript':'UTF-8'}";
 </script>
