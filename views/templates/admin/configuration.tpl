@@ -70,7 +70,7 @@
 		</legend>
 
 		<label>
-			{l s='Sipping price calculation method:' mod='dpdgroup'}
+			{l s='Shipping price calculation method:' mod='dpdgroup'}
 		</label>
 		<div class="margin-form">
 			<input id="price_calculation_webservices" type="radio" name="{DpdGroupConfiguration::PRICE_CALCULATION|escape:'htmlall':'UTF-8'}" {if DPDGroup::getInputValue(DpdGroupConfiguration::PRICE_CALCULATION, $settings->price_calculation_method) == DpdGroupConfiguration::PRICE_CALCULATION_WEB_SERVICES}checked="checked"{/if} value="{DpdGroupConfiguration::PRICE_CALCULATION_WEB_SERVICES}" />
