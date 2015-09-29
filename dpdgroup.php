@@ -54,7 +54,7 @@ class DpdGroup extends CarrierModule
 	{
 		$this->name = 'dpdgroup';
 		$this->tab = 'shipping_logistics';
-		$this->version = '0.1.0';
+		$this->version = '1.0.0';
 		$this->author = 'Invertus';
 		$this->module_key = '8f6c90d2a004cd27f552fc11d1152846';
 
