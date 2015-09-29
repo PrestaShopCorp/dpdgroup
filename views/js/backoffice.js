@@ -24,6 +24,10 @@ $(document).ready(function(){
 		$('#toggle_csv_info').slideToggle();
 	});
 
+	$('#toggle_postcode_info_link').click(function(){
+		$('#postcode_info_container').slideToggle();
+	});
+
 	$('#toggle_cod_info_link').click(function(){
 		$('#toggle_cod_info').slideToggle();
 	});

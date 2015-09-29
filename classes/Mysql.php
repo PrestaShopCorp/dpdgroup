@@ -39,7 +39,7 @@ class DpdGroupDpdPostcodeMysql
 		$city = $address[DpdGroupSearch::ADDRESS_FIELD_CITY];
 
 		return DB::getInstance()->executeS('
-			SELECT `id_postcode`, `postcode`, `region`, `city`, `road_type`, `address`, `d_depo`, `d_sort`, `zone`, `saturday`, `route`
+			SELECT `id_postcode`, `postcode`, `region`, `city`, `address`
 			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `region` LIKE "%'.pSQL($region).'%"
 				AND `city` LIKE "%'.pSQL($city).'%"
@@ -115,7 +115,7 @@ class DpdGroupDpdPostcodeMysql
 			return false;
 
 		$results = DB::getInstance()->executeS('
-			SELECT `id_postcode`, `postcode`, `region`, `city`, `road_type`, `address`, `d_depo`, `d_sort`, `zone`, `saturday`, `route`
+			SELECT `id_postcode`, `postcode`, `region`, `city`, `address`
 			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `region` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_REGION]).'%"
 				AND `city` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_CITY]).'%"
@@ -573,7 +573,7 @@ class DpdGroupDpdPostcodeMysql
 		$sql = 'SELECT '.($count === true ? ' COUNT(*) AS count ' : ' * ').'
 			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 			WHERE `region` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_REGION]).'%"
-				AND `city` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_REGION]).'%"';
+				AND `city` LIKE "%'.pSQL($address[DpdGroupSearch::ADDRESS_FIELD_CITY]).'%"';
 
 		$words_new = array();
 

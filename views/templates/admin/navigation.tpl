@@ -48,6 +48,12 @@
 					</a>
 				</li>
 				<li>
+					<a id="postcode_page" href="{$module_link|escape:'htmlall':'UTF-8'}&menu=postcode" class="toolbar_btn">
+						<span class="process-icon-envelope envelope"></span>
+						<div>{l s='Postcodes' mod='dpdgroup'}</div>
+					</a>
+				</li>
+				<li>
 					<a id="settings_page" href="{$module_link|escape:'htmlall':'UTF-8'}&menu=configuration" class="toolbar_btn">
 						<span class="process-icon-settings settings"></span>
 						<div>{l s='Settings' mod='dpdgroup'}</div>
