@@ -25,10 +25,10 @@ function upgrade_module_1_0_0($module)
 {
 	if (Db::getInstance()->ExecuteS('SHOW COLUMNS FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'` LIKE "road_type"') == true)
 	{
-		if (!Db::getInstance()->Execute('ALTER TABLE `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'` DROP COLUMN `road_type`'))
+		if (!Db::getInstance()->Execute('ALTER TABLE `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'` DROP INDEX `postcode_2`'))
 			return false;
 
-		if (!Db::getInstance()->Execute('ALTER TABLE `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'` DROP INDEX `postcode_2`'))
+		if (!Db::getInstance()->Execute('ALTER TABLE `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'` DROP COLUMN `road_type`'))
 			return false;
 
 		if (!Db::getInstance()->Execute('ALTER TABLE `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
