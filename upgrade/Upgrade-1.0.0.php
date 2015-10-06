@@ -31,6 +31,26 @@ function upgrade_module_1_0_0($module)
 		if (!Db::getInstance()->Execute('ALTER TABLE `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'` DROP COLUMN `road_type`'))
 			return false;
 
+		$duplicated_data = DB::getInstance()->executeS('
+			SELECT `id_postcode`, `postcode`, `region`, `city`, `address`
+			FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
+			GROUP BY `postcode`, `region`, `city`, `address`
+			HAVING (COUNT(*) > 1)
+		');
+
+		foreach ($duplicated_data as $row)
+		{
+			if (!DB::getInstance()->execute('
+				DELETE FROM `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
+				WHERE `postcode` = "'.pSQL($row['postcode']).'"
+					AND `region` = "'.pSQL($row['region']).'"
+					AND `city` = "'.pSQL($row['city']).'"
+					AND `address` = "'.pSQL($row['address']).'"
+					AND `id_postcode` != "'.(int)$row['id_postcode'].'"
+			'))
+				return false;
+		}
+
 		if (!Db::getInstance()->Execute('ALTER TABLE `'._DB_PREFIX_._DPDGROUP_POSTCODE_DB_.'`
 		    ADD CONSTRAINT `postcode_2` UNIQUE (`postcode`, `region`, `city`, `address`)'))
 			return false;
