@@ -54,7 +54,7 @@ class DpdGroup extends CarrierModule
 	{
 		$this->name = 'dpdgroup';
 		$this->tab = 'shipping_logistics';
-		$this->version = '0.1.0';
+		$this->version = '1.0.0';
 		$this->author = 'Invertus';
 		$this->module_key = '8f6c90d2a004cd27f552fc11d1152846';
 
@@ -124,10 +124,7 @@ class DpdGroup extends CarrierModule
 	{
 		foreach ($hooks as $hook)
 			if (!$this->registerHook($hook))
-			{
-
 				return false;
-			}
 
 		return true;
 	}
@@ -263,6 +260,26 @@ class DpdGroup extends CarrierModule
 				$csv_controller = new DpdGroupCSVController();
 				$this->html .= $csv_controller->getCSVPage();
 				break;
+			case 'postcode':
+				require_once(_DPDGROUP_CONTROLLERS_DIR_.'Postcode.controller.php');
+
+				DpdGroupPostcodeController::init();
+
+				if (!$this->bootstrap)
+				{
+					$this->context->smarty->assign('path', array($this->displayName, $this->l('Postcodes update')));
+					$this->displayNavigation();
+				}
+
+				if (!$this->ps_14)
+					if (Shop::getContext() != Shop::CONTEXT_SHOP)
+					{
+						$this->displayAdminWarning($this->l('Postcodes management is disabled when all shops or group of shops are selected'));
+						break;
+					}
+				$psotcode_controller = new DpdGroupPostcodeController();
+				$this->html .= $psotcode_controller->getPostcodePage();
+				break;
 			case 'help':
 				if (!$this->bootstrap)
 				{
@@ -391,6 +408,13 @@ class DpdGroup extends CarrierModule
 				'href' => $this->module_url.'&menu=csv',
 				'active' => false,
 				'imgclass' => 'icon-money'
+			),
+			'postcode' => array(
+				'short' => 'Postcodes',
+				'desc' => $this->l('Postcodes'),
+				'href' => $this->module_url.'&menu=postcode',
+				'active' => false,
+				'imgclass' => 'icon-envelope'
 			),
 			'configuration' => array(
 				'short' => 'Settings',

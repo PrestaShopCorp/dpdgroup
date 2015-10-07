@@ -13,6 +13,11 @@
 	background-image: url("../img/toolbar/csv_tools.png");
 }
 
+.process-icon-envelope
+{
+	background-image: url("../img/toolbar/envelope.png");
+}
+
 .process-icon-shipment_list
 {
 	background-image: url("../img/toolbar/shipment_list.png");
@@ -145,13 +150,17 @@ table#shipment_list tr.nodrag.nodrop a:hover
 	width: auto;
 }
 
-div.toggle_csv_info_link_container, div.toggle_cod_info_link_container
+div.toggle_csv_info_link_container,
+div.toggle_cod_info_link_container,
+div.toggle_postcode_info_link_container
 {
 	margin-bottom: 10px;
 	margin-top: 10px;
 }
 
-a#toggle_csv_info_link, a#toggle_cod_info_link
+a#toggle_csv_info_link,
+a#toggle_cod_info_link,
+a#toggle_postcode_info_link
 {
 	text-decoration: underline;
 	cursor: pointer;
@@ -162,13 +171,15 @@ a#toggle_csv_info_link:hover, a#toggle_cod_info_link:hover
 	text-decoration: none;
 }
 
-div#toggle_csv_info, div#toggle_cod_info
+div#toggle_csv_info,
+div#toggle_cod_info
 {
 	display: none;
     border: 1px solid #FFFFFF;
 }
 
-div.csv_info_container, div.cod_info_container
+div.csv_info_container,
+div.cod_info_container
 {
 	border: 1px solid #CCCCCC;
 	padding: 5px;
@@ -209,4 +220,34 @@ div.csv_info_container span span, div.cod_info_container span span
 	width: 180px;
 	z-index: 10000;
 	display: none;
+}
+
+div#postcode_info_container
+{
+	display: none;
+	border: solid 1px #CCCCCC;;
+}
+
+div#postcode_info_container span
+{
+	display: block;
+	padding: 5px;
+}
+
+div#postcode_info_container span span
+{
+	display: block;
+	margin: 0 0 0 30px;
+	padding: 5px;
+}
+
+table#table-postcode-list th a
+{
+	text-decoration: none;
+}
+
+table#table-postcode-list th a img
+{
+	border: 0;
+	padding: 0;
 }

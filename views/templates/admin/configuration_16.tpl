@@ -92,7 +92,7 @@
 		<div class="form-wrapper">
 			<div class="form-group">
 				<label class="control-label col-lg-3">
-					{l s='Sipping price calculation method:' mod='dpdgroup'}
+					{l s='Shipping price calculation method:' mod='dpdgroup'}
 				</label>
 				<div class="col-lg-9">
 					<p class="radio">

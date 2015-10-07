@@ -91,22 +91,16 @@ $sql[] =
 		`postcode` varchar(10) NOT NULL,
 		`region` varchar(50) NULL,
 		`city` varchar(20) NOT NULL,
-		`road_type` varchar(15) NULL,
 		`address` varchar(100) NULL,
-		`d_depo` int(5) NULL,
-		`d_sort` varchar(5) NULL,
-		`zone` varchar(5) NULL,
-		`saturday` tinyint(1) NULL,
-		`route` varchar(5) NULL,
 	PRIMARY KEY (`id_postcode`),
 	UNIQUE
-	KEY `postcode_2` (`postcode`,`region`,`city`,`road_type`,`address`),
+	KEY `postcode_2` (`postcode`, `region`, `city`, `address`),
 	KEY `postcode` (`postcode`),
 	KEY `city` (`city`),
 	KEY `region` (`region`),
-	KEY `region_2` (`region`,`city`),
+	KEY `region_2` (`region`, `city`),
 	KEY `address` (`address`),
-	KEY `region_3` (`region`,`city`,`address`)
+	KEY `region_3` (`region`, `city`, `address`)
 	) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 $postcodes = Tools::file_get_contents(_DPDGROUP_SQL_DIR_.'data.sql');
