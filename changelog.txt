@@ -1,0 +1,13 @@
+##########################
+# v1.0.0  - (2015-09-29) #
+##########################
+
+Module bugfixes:
+
+[-] FO : Fixed issue of wrongly searched postcode by address, state and city
+
+Module improvements:
+
+[+] BO : Added new page and functionality for postcodes management
+[-] BO : Removed unused fields and data for postcode search
+[+] BO : Added upgrade functionality

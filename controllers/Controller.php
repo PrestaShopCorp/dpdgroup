@@ -53,7 +53,7 @@ class DpdGroupController
 		$sql = '';
 
 		foreach ($keys_array as $key)
-			if ($this->context->cookie->__isset($table.'Filter_'.$key))
+			if ($this->context->cookie->{$table.'Filter_'.$key} !== '' && $this->context->cookie->{$table.'Filter_'.$key} !== false)
 			{
 				$value = $this->context->cookie->{$table.'Filter_'.$key};
 
